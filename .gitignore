@@ -1,3 +1,11 @@
 node_modules
 .vercel
 .env*
+.DS_Store
+
+# arquivos gerados pelos scripts do manual
+ferramentas/manual/deps/
+ferramentas/manual/prints/
+ferramentas/manual/img/
+ferramentas/manual/saida/
+ferramentas/manual/render/
