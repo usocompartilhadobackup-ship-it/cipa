@@ -202,6 +202,12 @@ tr.det td{background:var(--surface-2);white-space:normal;padding:4px 12px 14px}
 .acessos{margin:0;padding:0;list-style:none;display:grid;gap:10px}
 .acessos li{padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:15px}
 .acessos code{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:13.5px;background:var(--surface-2);padding:1px 6px;border-radius:6px}
+.login{max-width:420px;margin:40px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 22px}
+.login h1{font:800 34px/1 var(--font-display);text-transform:uppercase;margin:6px 0 6px}
+.login .fld{margin-top:16px}
+.login .campo{width:100%;font-size:16px;padding:11px 12px}
+.login .btn-s{width:100%;padding:14px 16px;font-size:18px;margin-top:20px}
+.bo.sem-nav{grid-template-columns:minmax(0,1fr)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:15px;font-weight:500;box-shadow:var(--shadow);z-index:30;max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -213,6 +219,7 @@ tr.det td{background:var(--surface-2);white-space:normal;padding:4px 12px 14px}
     <div class="bo-brand"><img class="lm" src="/img/logo-momesso.png" alt="Momesso"><span class="sep" aria-hidden="true"></span><img class="lc" src="/img/logo-cipa.png" alt="CIPA Segurança"></div>
     <div class="bo-dir">
       <a class="lk" href="/" target="_blank" rel="noopener">Abrir o quiz</a>
+      <button type="button" class="lk" data-act="sair" id="bt-sair" hidden>Sair</button>
     </div>
   </div>
 </header>
@@ -225,15 +232,14 @@ tr.det td{background:var(--surface-2);white-space:normal;padding:4px 12px 14px}
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 /* ================= Estado ================= */
-let S = { setores:[], funcionarios:[], tentativas:{}, config:{ exigirMatricula:false }, papel:null, atualizadoEm:null };
+let S = { setores:[], funcionarios:[], tentativas:{}, papel:null, atualizadoEm:null };
 let PERGUNTAS = [];
-const SECOES_VALIDAS = ["visao","ranking","brindes","funcionarios","setores","config"];
-const ADMIN_SECOES = ["funcionarios","setores","config"];
+const SECOES_VALIDAS = ["visao","ranking","brindes","setores","config"];
+const ADMIN_SECOES = ["setores","config"];
 const UI = { secao: SECOES_VALIDAS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "visao", carregado:false };
 const F = {
   rk:{ busca:"", setor:"", todas:false, aberto:null },
   br:{ busca:"", confirmando:null },
-  fn:{ busca:"", setor:"", sit:"", form:null, imp:null, excluindo:null },
   st:{ renomeando:null, excluindo:null, erro:"", erroRen:"", novo:"" }
 };
 let ocupado = false;
@@ -247,7 +253,8 @@ const fmtDH = new Intl.DateTimeFormat("pt-BR", { timeZone:"America/Sao_Paulo", d
 const fmtH = new Intl.DateTimeFormat("pt-BR", { timeZone:"America/Sao_Paulo", hour:"2-digit", minute:"2-digit" });
 const dataHora = (i) => fmtDH.format(new Date(i)).replace(",", " às");
 const hora = (i) => fmtH.format(new Date(i));
-const mmss = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(Math.round(s % 60)).padStart(2, "0");
+// 4.2 -> "4,2 s" · 65 -> "1 min 05 s" (mesmo formato do quiz)
+const mmss = (s) => s < 60 ? s.toFixed(1).replace(".", ",") + " s" : `${Math.floor(s / 60)} min ${String(Math.floor(s % 60)).padStart(2, "0")} s`;
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
 const hojeISO = () => new Date().toLocaleDateString("sv-SE", { timeZone:"America/Sao_Paulo" });
 
@@ -276,12 +283,12 @@ async function api(metodo, acao, corpo) {
   } catch { throw new Error("Sem conexão com o servidor. Confira a internet e tente de novo."); }
   let j = {};
   try { j = await r.json(); } catch {}
-  if (r.status === 401) throw new Error("Sua sessão expirou. Recarregue a página e entre de novo.");
+  if (r.status === 401 && j.login) throw Object.assign(new Error(j.erro), { login: true });
   if (!r.ok) throw new Error(j.erro || "Não foi possível concluir. Tente de novo.");
   return j;
 }
 function aplicar(d) {
-  S = { setores:d.setores, funcionarios:d.funcionarios, tentativas:{}, config:d.config, papel:d.papel, atualizadoEm:new Date() };
+  S = { setores:d.setores, funcionarios:d.funcionarios, tentativas:{}, papel:d.papel, atualizadoEm:new Date() };
   d.tentativas.forEach((t) => { S.tentativas[t.funcionarioId] = t; });
   PERGUNTAS = d.perguntas;
 }
@@ -295,14 +302,13 @@ async function executar(acao, corpo, aoErro) {
     if (r.mensagem) toast(r.mensagem);
     return r;
   } catch (e) {
+    if (e.login) { mostrarLogin("Sua sessão expirou. Entre de novo."); return null; }
     if (aoErro) aoErro(e.message); else toast(e.message);
     return null;
   } finally { ocupado = false; document.body.classList.remove("ocupado"); }
 }
 
 /* ================= Regras calculadas ================= */
-const funcionario = (id) => S.funcionarios.find((f) => f.id === id);
-const nomeSetor = (id) => { const s = S.setores.find((x) => x.id === id); return s ? s.nome : "—"; };
 const tempoSeg = (t) => (Date.parse(t.concluidaEm) - Date.parse(t.iniciadaEm)) / 1000;
 function ranking() {
   const lista = Object.values(S.tentativas).filter((t) => t.status === "concluida").map((t) => ({ fid:t.funcionarioId, t, tempo:tempoSeg(t) }));
@@ -311,18 +317,17 @@ function ranking() {
   return lista;
 }
 function indicadores() {
-  const ativos = S.funcionarios.filter((f) => f.ativo).length;
   const ts = Object.values(S.tentativas);
   const concl = ts.filter((t) => t.status === "concluida");
   const prem = concl.filter((t) => t.acertos === t.total);
-  return { ativos, concluidas:concl.length, premiados:prem.length, entregues:prem.filter((t) => t.brindeEm).length, andamento:ts.length - concl.length };
+  return { participantes:ts.length, concluidas:concl.length, premiados:prem.length, entregues:prem.filter((t) => t.brindeEm).length, andamento:ts.length - concl.length };
 }
 function pontos(n, total) { return `<span class="pontos" aria-hidden="true">${Array.from({ length:total }, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</span>`; }
 
 /* ================= Estrutura ================= */
 const SECOES = [
   { grupo:"Painel da CIPA", itens:[["visao","Visão geral"],["ranking","Ranking"],["brindes","Entrega de brindes"]] },
-  { grupo:"Administração", admin:true, itens:[["funcionarios","Funcionários"],["setores","Setores"],["config","Configurações"]] }
+  { grupo:"Administração", admin:true, itens:[["setores","Setores"],["config","Configurações"]] }
 ];
 function renderTudo(focoTitulo) {
   if (S.papel !== "admin" && ADMIN_SECOES.includes(UI.secao)) UI.secao = "visao";
@@ -338,26 +343,22 @@ function renderNav() {
     }).join("")).join("");
 }
 function renderSecao(focoTitulo) {
-  const fn = { visao:secVisao, ranking:secRanking, brindes:secBrindes, funcionarios:secFuncionarios, setores:secSetores, config:secConfig }[UI.secao];
+  const fn = { visao:secVisao, ranking:secRanking, brindes:secBrindes, setores:secSetores, config:secConfig }[UI.secao];
   $("#bo-main").innerHTML = fn();
   if (UI.secao === "ranking") renderRankingTabela();
   if (UI.secao === "brindes") renderBrindesLista();
-  if (UI.secao === "funcionarios") renderFnTabela();
   if (UI.secao === "config") renderQR();
   if (focoTitulo) focar("#bo-main h1");
 }
 const cabecalho = (eyebrow, titulo, sub, acoes) => `<div class="pg-head"><div><p class="eyebrow">${eyebrow}</p><h1 tabindex="-1">${titulo}</h1>${sub ? `<p class="pg-sub">${sub}</p>` : ""}</div>${acoes || ""}</div>`;
-const optsSetores = (sel, soAtivos, vazio) => (vazio ? `<option value="">${vazio}</option>` : "") +
-  S.setores.filter((s) => !soAtivos || s.ativo || s.id === sel).slice().sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
-    .map((s) => `<option value="${esc(s.id)}" ${s.id === sel ? "selected" : ""}>${esc(s.nome)}${s.ativo ? "" : " (inativo)"}</option>`).join("");
 const atualizadoTxt = () => `<p class="atual" id="atualizado">Atualizado às ${S.atualizadoEm ? hora(S.atualizadoEm) : "--:--"}</p>`;
 
 /* ---- Visão geral ---- */
 function secVisao() {
   const k = indicadores(); const top = ranking().slice(0, 5);
   const tiles = `<div class="tiles">
-    <div class="tile"><div class="k">Funcionários ativos</div><div class="v">${k.ativos}</div><div class="r">na lista do quiz</div></div>
-    <div class="tile"><div class="k">Responderam</div><div class="v">${k.concluidas}<small> / ${k.ativos}</small></div><div class="r">${pct(k.concluidas, k.ativos)}% dos ativos</div></div>
+    <div class="tile"><div class="k">Participantes</div><div class="v">${k.participantes}</div><div class="r">começaram o quiz</div></div>
+    <div class="tile"><div class="k">Concluíram</div><div class="v">${k.concluidas}<small> / ${k.participantes}</small></div><div class="r">${pct(k.concluidas, k.participantes)}% dos participantes</div></div>
     <div class="tile destaque"><div class="k">Acertaram todas</div><div class="v">${k.premiados}</div><div class="r">ganharam o brinde</div></div>
     <div class="tile"><div class="k">Brindes entregues</div><div class="v">${k.entregues}<small> / ${k.premiados}</small></div><div class="r">${k.premiados - k.entregues} a entregar</div></div>
     <div class="tile"><div class="k">Em andamento</div><div class="v">${k.andamento}</div><div class="r">começaram e não terminaram</div></div></div>`;
@@ -373,15 +374,17 @@ function secVisao() {
     return `<div class="perg"><div class="perg-t"><span>${i + 1}. ${esc(p.curto)}</span><span class="pc">${v}%</span></div>
       <div class="trilho" role="img" aria-label="${v}% de acerto"><i style="width:${v}%"></i></div><div class="dist">${dist}<span>${marcadas.length} resposta${marcadas.length === 1 ? "" : "s"}</span></div></div>`;
   }).join("");
-  const setores = S.setores.filter((s) => s.ativo).map((s) => {
-    const fs = S.funcionarios.filter((f) => f.ativo && f.setorId === s.id);
-    const ts = fs.map((f) => S.tentativas[f.id]).filter((t) => t && t.status === "concluida");
-    const media = ts.length ? (ts.reduce((a, t) => a + t.acertos, 0) / ts.length).toFixed(1).replace(".", ",") : "—";
-    return { s, total:fs.length, resp:ts.length, media };
-  }).filter((x) => x.total).sort((a, b) => pct(b.resp, b.total) - pct(a.resp, a.total));
-  const tabSet = !setores.length ? `<p class="vazio-b">Cadastre funcionários para ver a participação de cada setor.</p>` : `<div class="tabela"><table><thead><tr><th>Setor</th><th>Responderam</th><th style="width:40%">Participação</th><th>Média de acertos</th></tr></thead><tbody>${setores.map((x) => {
-    const v = pct(x.resp, x.total);
-    return `<tr><td class="nome-c">${esc(x.s.nome)}</td><td>${x.resp} de ${x.total}</td><td><div style="display:flex;align-items:center;gap:10px"><div class="trilho laranja" style="flex:1;min-width:80px"><i style="width:${v}%"></i></div><span style="width:40px;text-align:right">${v}%</span></div></td><td>${x.media}${x.media !== "—" ? " de " + (PERGUNTAS.length || 4) : ""}</td></tr>`;
+  const setorDe = new Map(S.funcionarios.map((f) => [f.id, f.setorId]));
+  const setores = S.setores.map((s) => {
+    const ts = Object.values(S.tentativas).filter((t) => setorDe.get(t.funcionarioId) === s.id);
+    const concl = ts.filter((t) => t.status === "concluida");
+    const prem = concl.filter((t) => t.acertos === t.total).length;
+    const media = concl.length ? (concl.reduce((a, t) => a + t.acertos, 0) / concl.length).toFixed(1).replace(".", ",") : "—";
+    return { s, part:ts.length, concl:concl.length, prem, media };
+  }).filter((x) => x.part).sort((a, b) => b.concl - a.concl || a.s.nome.localeCompare(b.s.nome, "pt-BR"));
+  const tabSet = !setores.length ? `<p class="vazio-b">Quando os funcionários começarem a responder, a participação de cada setor aparece aqui.</p>` : `<div class="tabela"><table><thead><tr><th>Setor</th><th>Participantes</th><th>Concluíram</th><th style="width:34%">Acertaram todas</th><th>Média de acertos</th></tr></thead><tbody>${setores.map((x) => {
+    const v = pct(x.prem, x.concl);
+    return `<tr><td class="nome-c">${esc(x.s.nome)}</td><td>${x.part}</td><td>${x.concl}</td><td><div style="display:flex;align-items:center;gap:10px"><div class="trilho" style="flex:1;min-width:80px"><i style="width:${v}%"></i></div><span style="min-width:72px;text-align:right">${x.prem} (${v}%)</span></div></td><td>${x.media}${x.media !== "—" ? " de " + (PERGUNTAS.length || 4) : ""}</td></tr>`;
   }).join("")}</tbody></table></div>`;
   return cabecalho("Painel da CIPA", "Visão geral", "Quiz da Segurança · regras do estacionamento", atualizadoTxt()) + tiles +
     `<div class="pilha"><div class="grid2">
@@ -425,7 +428,7 @@ function renderRankingTabela() {
   }).join("")}</tbody></table></div>`;
 }
 function exportarCSV() {
-  const linhas = [["Posição","Nome","Setor","Acertos","Total","Tempo (mm:ss)","Concluído em","Código","Brinde entregue em","Entregue por"]];
+  const linhas = [["Posição","Nome","Setor","Acertos","Total","Tempo","Concluído em","Código","Brinde entregue em","Entregue por"]];
   ranking().forEach((r) => linhas.push([r.pos, r.t.nome, r.t.setor, r.t.acertos, r.t.total, mmss(r.tempo), dataHora(r.t.concluidaEm), r.t.codigo || "", r.t.brindeEm ? dataHora(r.t.brindeEm) : "", r.t.brindePor || ""]));
   const csv = "\ufeff" + linhas.map((l) => l.map((c) => { const s = String(c == null ? "" : c); return /[;"\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(";")).join("\r\n");
   baixar(new Blob([csv], { type:"text/csv;charset=utf-8" }), `ranking-quiz-cipa-${hojeISO()}.csv`);
@@ -461,115 +464,10 @@ function renderBrindesLista() {
   alvo.innerHTML = html;
 }
 
-/* ---- Funcionários ---- */
-function secFuncionarios() {
-  const at = S.funcionarios.filter((f) => f.ativo).length, ina = S.funcionarios.length - at;
-  return cabecalho("Administração", "Funcionários", `${at} ativo${at === 1 ? "" : "s"} · ${ina} inativo${ina === 1 ? "" : "s"}. Só os ativos aparecem na lista do quiz.`,
-    `<div class="pg-acoes"><button type="button" class="btn-s sec" data-act="fn-importar">Importar CSV</button><button type="button" class="btn-s" data-act="fn-novo">Novo funcionário</button></div>`) +
-  `<div id="fn-form">${fnFormHtml()}</div>
-  <section class="bloco">
-    <div class="barra-ferr">
-      <input id="fn-busca" class="campo busca" type="search" placeholder="Buscar por nome ou matrícula" value="${esc(F.fn.busca)}" aria-label="Buscar por nome ou matrícula">
-      <select id="fn-setor" class="campo" aria-label="Filtrar por setor">${optsSetores(F.fn.setor, false, "Todos os setores")}</select>
-      <select id="fn-sit" class="campo" aria-label="Filtrar por situação"><option value="">Ativos e inativos</option><option value="ativo" ${F.fn.sit === "ativo" ? "selected" : ""}>Só ativos</option><option value="inativo" ${F.fn.sit === "inativo" ? "selected" : ""}>Só inativos</option></select>
-    </div>
-    <div id="fn-tabela"></div>
-  </section>`;
-}
-function fnFormHtml() {
-  const fm = F.fn.form, imp = F.fn.imp;
-  if (fm) {
-    const e = fm.erros || {}; const temTent = fm.id && S.tentativas[fm.id];
-    const semSetor = !S.setores.some((s) => s.ativo);
-    return `<form class="form-painel" id="form-fn" novalidate><h2>${fm.id ? "Editar funcionário" : "Novo funcionário"}</h2>
-      ${semSetor ? `<p class="aviso-b erro" style="margin:0 0 14px">Cadastre um setor antes. <button type="button" class="lk" data-act="nav" data-s="setores">Ir para Setores</button></p>` : ""}
-      <div class="form-grid">
-        <div class="fld"><label for="fn-nome">Nome completo</label><input id="fn-nome" class="campo" maxlength="120" value="${esc(fm.nome)}" ${e.nome ? 'aria-invalid="true"' : ""}>${e.nome ? `<p class="err">${e.nome}</p>` : ""}</div>
-        <div class="fld"><label for="fn-mat">Matrícula <span class="mut">(opcional)</span></label><input id="fn-mat" class="campo" inputmode="numeric" maxlength="10" value="${esc(fm.matricula)}" ${e.mat ? 'aria-invalid="true"' : ""}>${e.mat ? `<p class="err">${e.mat}</p>` : `<p class="aj">Necessária se "Exigir matrícula" estiver ligado.</p>`}</div>
-        <div class="fld"><label for="fn-st">Setor</label><select id="fn-st" class="campo" ${e.setor ? 'aria-invalid="true"' : ""}>${optsSetores(fm.setorId, true, "Escolha o setor")}</select>${e.setor ? `<p class="err">${e.setor}</p>` : ""}</div>
-        <div class="fld"><span class="rot">Situação</span><label class="check" for="fn-ativo"><input id="fn-ativo" type="checkbox" ${fm.ativo ? "checked" : ""}> Ativo (aparece no quiz)</label></div>
-      </div>
-      ${temTent ? `<p class="aviso-b">Esta pessoa já respondeu o quiz. O ranking continua mostrando o nome e o setor do momento da resposta.</p>` : ""}
-      ${fm.erroGeral ? `<p class="aviso-b erro" role="alert">${esc(fm.erroGeral)}</p>` : ""}
-      <div class="form-acoes"><button type="submit" class="btn-s">${fm.id ? "Salvar alterações" : "Cadastrar funcionário"}</button><button type="button" class="lk" data-act="fn-fechar">Cancelar</button></div></form>`;
-  }
-  if (imp) {
-    const linhas = imp.preview;
-    const novos = linhas ? linhas.filter((l) => l.status === "novo") : [];
-    const setoresNovos = [...new Set(novos.filter((l) => l.setorNovo).map((l) => l.setor))];
-    return `<div class="form-painel"><h2>Importar funcionários</h2>
-      <div class="form-grid" style="grid-template-columns:minmax(0,1fr)">
-        <div class="fld"><label for="fn-arquivo">Escolha o arquivo CSV</label><input id="fn-arquivo" type="file" accept=".csv,text/csv,text/plain" class="campo">
-          <p class="aj">Uma pessoa por linha, no formato <strong>nome;matricula;setor</strong>. No Excel, use "Salvar como" › <strong>CSV UTF-8</strong>. <button type="button" class="lk" data-act="fn-modelo">Baixar modelo</button></p></div>
-        <div class="fld"><label for="fn-csv">Ou cole o conteúdo aqui</label><textarea id="fn-csv" class="campo" spellcheck="false" placeholder="nome;matricula;setor&#10;Maria da Silva;1234;Produção">${esc(imp.texto)}</textarea></div>
-      </div>
-      <label class="check" style="margin-top:12px"><input id="fn-criar" type="checkbox" ${imp.criarSetores ? "checked" : ""}> Criar os setores que ainda não existem</label>
-      <div class="form-acoes"><button type="button" class="btn-s sec" data-act="fn-previa">Pré-visualizar</button><button type="button" class="lk" data-act="fn-fechar">Cancelar</button></div>
-      ${linhas ? (linhas.length ? `<div class="tabela" style="margin-top:16px"><table><thead><tr><th>Linha</th><th>Nome</th><th>Matrícula</th><th>Setor</th><th>O que acontece</th></tr></thead><tbody>${linhas.map((l, i) => `<tr><td>${i + 1}</td><td class="nome-c">${esc(l.nome || "—")}</td><td>${esc(l.mat || "—")}</td><td>${esc(l.setor || "—")}</td><td><span class="pill ${l.status === "novo" ? (l.setorNovo ? "warn" : "ok") : l.status === "invalida" ? "bad" : "neutro"}">${esc(l.msg)}</span></td></tr>`).join("")}</tbody></table></div>
-      <div class="form-acoes"><button type="button" class="btn-s" data-act="fn-importar-ok" ${novos.length ? "" : "disabled"}>Importar ${novos.length} funcionário${novos.length === 1 ? "" : "s"}</button>${setoresNovos.length ? `<span class="mut" style="font-size:14px">Setores novos: ${esc(setoresNovos.join(", "))}</span>` : ""}</div>` : `<p class="aviso-b erro">Nenhuma linha encontrada. Confira o arquivo.</p>`) : ""}
-      ${imp.erro ? `<p class="aviso-b erro" role="alert">${esc(imp.erro)}</p>` : ""}
-    </div>`;
-  }
-  return "";
-}
-function renderFnTabela() {
-  const alvo = $("#fn-tabela"); if (!alvo) return;
-  const termo = norm(F.fn.busca);
-  const lista = S.funcionarios.filter((f) => (norm(f.nome).includes(termo) || (f.matricula || "").includes(F.fn.busca.trim()))
-    && (!F.fn.setor || f.setorId === F.fn.setor) && (!F.fn.sit || (F.fn.sit === "ativo") === f.ativo))
-    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
-  if (!lista.length) { alvo.innerHTML = `<p class="vazio-b">${S.funcionarios.length ? "Nenhum funcionário encontrado." : "Nenhum funcionário cadastrado. Use Novo funcionário ou Importar CSV."}</p>`; return; }
-  alvo.innerHTML = `<div class="tabela"><table><thead><tr><th>Nome</th><th>Matrícula</th><th>Setor</th><th>Situação</th><th>Quiz</th><th>Ações</th></tr></thead><tbody>${lista.map((f) => {
-    const t = S.tentativas[f.id];
-    const quiz = !t ? `<span class="pill neutro">Não respondeu</span>` : t.status === "em_andamento" ? `<span class="pill warn">Em andamento</span>` : `<span class="pill ${t.acertos === t.total ? "ok" : "neutro"}">${t.acertos} de ${t.total}</span>`;
-    let acoes;
-    if (F.fn.excluindo === f.id) acoes = `<span class="lk-acoes"><button type="button" class="btn-s perigo peq" data-act="fn-excluir-ok" data-f="${esc(f.id)}">Confirmar exclusão</button><button type="button" class="lk" data-act="fn-excluir-cancelar">Cancelar</button></span>`;
-    else acoes = `<span class="lk-acoes"><button type="button" class="lk" data-act="fn-editar" data-f="${esc(f.id)}">Editar</button><button type="button" class="lk" data-act="fn-ativo" data-f="${esc(f.id)}">${f.ativo ? "Inativar" : "Ativar"}</button>${t ? `<span class="mut" style="font-size:13px" title="Quem já respondeu não pode ser excluído, só inativado">Não exclui</span>` : `<button type="button" class="lk perigo" data-act="fn-excluir" data-f="${esc(f.id)}">Excluir</button>`}</span>`;
-    return `<tr><td class="nome-c">${esc(f.nome)}</td><td>${f.matricula ? esc(f.matricula) : `<span class="mut">—</span>`}</td><td>${esc(nomeSetor(f.setorId))}</td><td><span class="pill ${f.ativo ? "ok" : "neutro"}">${f.ativo ? "Ativo" : "Inativo"}</span></td><td>${quiz}</td><td>${acoes}</td></tr>`;
-  }).join("")}</tbody></table></div>`;
-}
-async function salvarFuncionario() {
-  const fm = F.fn.form;
-  fm.nome = $("#fn-nome").value.trim().replace(/\s+/g, " "); fm.matricula = $("#fn-mat").value.trim(); fm.setorId = $("#fn-st").value; fm.ativo = $("#fn-ativo").checked;
-  const e = {};
-  if (fm.nome.length < 3) e.nome = "Informe o nome completo.";
-  if (fm.matricula && !/^\d{1,10}$/.test(fm.matricula)) e.mat = "Use só números.";
-  else if (fm.matricula && S.funcionarios.some((f) => f.matricula === fm.matricula && f.id !== fm.id)) e.mat = "Já existe um funcionário com essa matrícula.";
-  if (!fm.setorId) e.setor = "Escolha o setor.";
-  fm.erros = e; fm.erroGeral = "";
-  if (Object.keys(e).length) { $("#fn-form").innerHTML = fnFormHtml(); focar('#form-fn [aria-invalid="true"]'); return; }
-  const r = await executar("func-salvar", { id: fm.id, nome: fm.nome, matricula: fm.matricula, setorId: fm.setorId, ativo: fm.ativo },
-    (msg) => { fm.erroGeral = msg; $("#fn-form").innerHTML = fnFormHtml(); });
-  if (r) { F.fn.form = null; renderTudo(); }
-}
-function analisarCSV(texto, criarSetores) {
-  const linhas = texto.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-  if (linhas.length && /^\ufeff?nome\s*[;,]/i.test(linhas[0])) linhas.shift();
-  const mats = new Set(S.funcionarios.map((f) => f.matricula).filter(Boolean));
-  const nomes = new Set(S.funcionarios.map((f) => norm(f.nome)));
-  return linhas.map((l) => {
-    const partes = l.includes(";") ? l.split(";") : l.split(",");
-    const [nome = "", mat = "", setor = ""] = partes.map((x) => x.trim().replace(/^"|"$/g, "").replace(/\s+/g, " "));
-    const base = { nome, mat, setor };
-    if (nome.length < 3 || setor.length < 2) return { ...base, status:"invalida", msg:"Incompleta: precisa de nome e setor" };
-    if (mat && !/^\d{1,10}$/.test(mat)) return { ...base, status:"invalida", msg:"Matrícula com letras" };
-    if (nomes.has(norm(nome)) || (mat && mats.has(mat))) return { ...base, status:"ignorar", msg:"Já cadastrado, será ignorado" };
-    const existe = S.setores.some((s) => norm(s.nome) === norm(setor));
-    if (!existe && !criarSetores) return { ...base, status:"ignorar", msg:"Setor não existe, será ignorado" };
-    nomes.add(norm(nome)); if (mat) mats.add(mat);
-    return { ...base, status:"novo", setorNovo:!existe, msg: existe ? "Será cadastrado" : "Será cadastrado com setor novo" };
-  });
-}
-function lerArquivo(arquivo) {
-  const ler = (cod) => new Promise((ok, falha) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = falha; fr.readAsText(arquivo, cod); });
-  return ler("utf-8").then((t) => t.includes("\ufffd") ? ler("windows-1252") : t);
-}
-
 /* ---- Setores ---- */
 function secSetores() {
   const linhas = S.setores.slice().sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map((s) => {
     const n = S.funcionarios.filter((f) => f.setorId === s.id).length;
-    const nAtivos = S.funcionarios.filter((f) => f.setorId === s.id && f.ativo).length;
     let nomeCel = esc(s.nome), acoes;
     if (F.st.renomeando === s.id) {
       nomeCel = `<form id="form-ren" class="lk-acoes" data-s="${esc(s.id)}" novalidate><input id="st-ren" class="campo" maxlength="80" value="${esc(s.nome)}" aria-label="Novo nome do setor" ${F.st.erroRen ? 'aria-invalid="true"' : ""}><button type="submit" class="btn-s peq">Salvar</button><button type="button" class="lk" data-act="st-cancelar">Cancelar</button></form>${F.st.erroRen ? `<p class="err" style="margin-top:6px">${esc(F.st.erroRen)}</p>` : ""}`;
@@ -577,28 +475,23 @@ function secSetores() {
     } else if (F.st.excluindo === s.id) {
       acoes = `<span class="lk-acoes"><button type="button" class="btn-s perigo peq" data-act="st-excluir-ok" data-s="${esc(s.id)}">Confirmar exclusão</button><button type="button" class="lk" data-act="st-cancelar">Cancelar</button></span>`;
     } else {
-      acoes = `<span class="lk-acoes"><button type="button" class="lk" data-act="st-renomear" data-s="${esc(s.id)}">Renomear</button><button type="button" class="lk" data-act="st-ativo" data-s="${esc(s.id)}">${s.ativo ? "Inativar" : "Ativar"}</button>${n ? `<span class="mut" style="font-size:13px" title="Setor com funcionários não pode ser excluído">Não exclui</span>` : `<button type="button" class="lk perigo" data-act="st-excluir" data-s="${esc(s.id)}">Excluir</button>`}</span>`;
+      acoes = `<span class="lk-acoes"><button type="button" class="lk" data-act="st-renomear" data-s="${esc(s.id)}">Renomear</button><button type="button" class="lk" data-act="st-ativo" data-s="${esc(s.id)}">${s.ativo ? "Inativar" : "Ativar"}</button>${n ? `<span class="mut" style="font-size:13px" title="Setor com participantes não pode ser excluído, só inativado">Não exclui</span>` : `<button type="button" class="lk perigo" data-act="st-excluir" data-s="${esc(s.id)}">Excluir</button>`}</span>`;
     }
-    return `<tr><td class="nome-c">${nomeCel}</td><td>${nAtivos} ativo${nAtivos === 1 ? "" : "s"}${n > nAtivos ? ` <span class="mut">· ${n - nAtivos} inativo${n - nAtivos === 1 ? "" : "s"}</span>` : ""}</td><td><span class="pill ${s.ativo ? "ok" : "neutro"}">${s.ativo ? "Ativo" : "Inativo"}</span></td><td>${acoes}</td></tr>`;
+    return `<tr><td class="nome-c">${nomeCel}</td><td>${n}</td><td><span class="pill ${s.ativo ? "ok" : "neutro"}">${s.ativo ? "Ativo" : "Inativo"}</span></td><td>${acoes}</td></tr>`;
   }).join("");
-  return cabecalho("Administração", "Setores", "O setor aparece abaixo do nome na lista do quiz e é usado nos filtros do painel.") +
+  return cabecalho("Administração", "Setores", "O funcionário escolhe o setor dele nesta lista ao entrar no quiz. Cadastre todos os setores antes de divulgar o link.") +
   `<div class="pilha"><form class="bloco" id="form-st" novalidate><div class="bloco-head"><h2>Novo setor</h2></div>
     <div class="barra-ferr" style="margin:0"><input id="st-nome" class="campo busca" maxlength="80" placeholder="Nome do setor" value="${esc(F.st.novo)}" aria-label="Nome do novo setor" ${F.st.erro ? 'aria-invalid="true"' : ""}><button type="submit" class="btn-s">Adicionar setor</button></div>
     ${F.st.erro ? `<p class="err" style="margin-top:8px">${esc(F.st.erro)}</p>` : ""}</form>
-  <section class="bloco">${S.setores.length ? `<div class="tabela"><table><thead><tr><th>Setor</th><th>Funcionários</th><th>Situação</th><th>Ações</th></tr></thead><tbody>${linhas}</tbody></table></div>` : `<p class="vazio-b">Nenhum setor cadastrado ainda.</p>`}
-  <p class="nota-regra">Setor inativo some da lista de escolha no cadastro, mas continua nos funcionários que já estão nele.</p></section></div>`;
+  <section class="bloco">${S.setores.length ? `<div class="tabela"><table><thead><tr><th>Setor</th><th>Participantes</th><th>Situação</th><th>Ações</th></tr></thead><tbody>${linhas}</tbody></table></div>` : `<p class="vazio-b">Nenhum setor cadastrado ainda.</p>`}
+  <p class="nota-regra">Setor inativo some da lista de escolha do quiz, mas continua no ranking de quem já respondeu.</p></section></div>`;
 }
 
 /* ---- Configurações ---- */
 const linkQuiz = () => location.origin + "/";
 function secConfig() {
-  const semMat = S.funcionarios.filter((f) => f.ativo && !f.matricula).length;
   return cabecalho("Administração", "Configurações", "") +
   `<div class="pilha">
-    <section class="bloco"><label class="switch" for="cfg-mat"><input id="cfg-mat" type="checkbox" role="switch" ${S.config.exigirMatricula ? "checked" : ""}>
-      <span><strong>Exigir matrícula para responder</strong><span>Depois de escolher o nome, o funcionário digita a matrícula. Impede que alguém responda no lugar de outra pessoa. Depois de 5 erros seguidos, aquele nome fica bloqueado por 15 minutos.</span></span></label>
-      ${semMat ? `<p class="aviso-b">${semMat} funcionário${semMat === 1 ? " ativo está" : "s ativos estão"} sem matrícula e não ${semMat === 1 ? "conseguirá" : "conseguirão"} responder com essa opção ligada. <button type="button" class="lk" data-act="nav" data-s="funcionarios">Ver funcionários</button></p>` : ""}
-    </section>
     <section class="bloco"><div class="bloco-head"><div><h2>Link do quiz</h2><p class="bloco-sub">Envie no grupo dos funcionários ou imprima o QR Code e cole no mural.</p></div></div>
       <div class="link-box"><span class="url" id="cfg-url">${esc(linkQuiz())}</span><button type="button" class="btn-s sec peq" data-act="copiar">Copiar link</button></div>
       <div class="qr-area"><div class="qr" id="qr"></div>
@@ -622,29 +515,12 @@ function renderQR() {
 
 /* ================= Eventos ================= */
 const ACOES = {
-  nav: (b) => { UI.secao = b.dataset.s; F.fn.form = F.fn.imp = null; F.rk.aberto = null; F.br.confirmando = null; history.replaceState(null, "", "#" + UI.secao); renderTudo(true); window.scrollTo(0, 0); atualizarSilencioso(); },
+  nav: (b) => { UI.secao = b.dataset.s; F.rk.aberto = null; F.br.confirmando = null; history.replaceState(null, "", "#" + UI.secao); renderTudo(true); window.scrollTo(0, 0); atualizarSilencioso(); },
   "rk-abrir": (b) => { F.rk.aberto = F.rk.aberto === b.dataset.f ? null : b.dataset.f; renderRankingTabela(); focar(`tr[data-f="${b.dataset.f}"]`); },
   csv: () => exportarCSV(),
   "br-registrar": (b) => { F.br.confirmando = b.dataset.t; renderBrindesLista(); focar('[data-act="br-ok"]'); },
   "br-cancelar": () => { F.br.confirmando = null; renderBrindesLista(); },
   "br-ok": async (b) => { const r = await executar("brinde", { tentativaId: b.dataset.t }); F.br.confirmando = null; renderNav(); renderBrindesLista(); if (!r) return; },
-  "fn-novo": () => { F.fn.imp = null; F.fn.form = { id:null, nome:"", matricula:"", setorId:"", ativo:true, erros:{} }; $("#fn-form").innerHTML = fnFormHtml(); focar("#fn-nome"); },
-  "fn-editar": (b) => { const f = funcionario(b.dataset.f); F.fn.imp = null; F.fn.form = { id:f.id, nome:f.nome, matricula:f.matricula || "", setorId:f.setorId, ativo:f.ativo, erros:{} }; $("#fn-form").innerHTML = fnFormHtml(); $("#fn-form").scrollIntoView({ block:"nearest" }); focar("#fn-nome"); },
-  "fn-fechar": () => { F.fn.form = F.fn.imp = null; $("#fn-form").innerHTML = ""; },
-  "fn-importar": () => { F.fn.form = null; F.fn.imp = { texto:"", criarSetores:true, preview:null, erro:"" }; $("#fn-form").innerHTML = fnFormHtml(); focar("#fn-arquivo"); },
-  "fn-modelo": () => baixar(new Blob(["\ufeffnome;matricula;setor\r\nMaria da Silva;1234;Produção\r\n"], { type:"text/csv;charset=utf-8" }), "modelo-funcionarios.csv"),
-  "fn-previa": () => { F.fn.imp.texto = $("#fn-csv").value; F.fn.imp.criarSetores = $("#fn-criar").checked; F.fn.imp.erro = ""; F.fn.imp.preview = analisarCSV(F.fn.imp.texto, F.fn.imp.criarSetores); $("#fn-form").innerHTML = fnFormHtml(); focar('[data-act="fn-importar-ok"]'); },
-  "fn-importar-ok": async () => {
-    const imp = F.fn.imp; const novos = (imp.preview || []).filter((l) => l.status === "novo");
-    if (!novos.length) return;
-    const r = await executar("importar", { linhas: novos.map((l) => ({ nome:l.nome, matricula:l.mat, setor:l.setor })), criarSetores: imp.criarSetores },
-      (msg) => { imp.erro = msg; $("#fn-form").innerHTML = fnFormHtml(); });
-    if (r) { F.fn.imp = null; renderTudo(); }
-  },
-  "fn-ativo": async (b) => { const f = funcionario(b.dataset.f); await executar("func-ativo", { id:f.id, ativo:!f.ativo }); renderTudo(); },
-  "fn-excluir": (b) => { F.fn.excluindo = b.dataset.f; renderFnTabela(); focar('[data-act="fn-excluir-ok"]'); },
-  "fn-excluir-cancelar": () => { F.fn.excluindo = null; renderFnTabela(); },
-  "fn-excluir-ok": async (b) => { await executar("func-excluir", { id:b.dataset.f }); F.fn.excluindo = null; renderTudo(); },
   "st-renomear": (b) => { F.st.renomeando = b.dataset.s; F.st.excluindo = null; F.st.erroRen = ""; renderSecao(); focar("#st-ren"); },
   "st-cancelar": () => { F.st.renomeando = F.st.excluindo = null; F.st.erroRen = ""; renderSecao(); },
   "st-ativo": async (b) => { const s = S.setores.find((x) => x.id === b.dataset.s); await executar("setor-ativo", { id:s.id, ativo:!s.ativo }); renderTudo(); },
@@ -660,12 +536,13 @@ const ACOES = {
     if (!c) { toast("Não foi possível gerar o QR Code. Recarregue a página e tente de novo."); return; }
     c.toBlob((blob) => baixar(blob, "qrcode-quiz-cipa.png"), "image/png");
   },
-  recarregar: () => iniciar()
+  recarregar: () => iniciar(),
+  sair: async () => { try { await api("POST", "sair"); } catch {} mostrarLogin(""); }
 };
 document.addEventListener("click", (e) => {
   const b = e.target.closest("[data-act]");
   if (!b || b.disabled) return;
-  if (ocupado && !["nav","rk-abrir","csv","copiar","qr-baixar","fn-fechar","fn-modelo"].includes(b.dataset.act)) return;
+  if (ocupado && !["nav","rk-abrir","csv","copiar","qr-baixar"].includes(b.dataset.act)) return;
   const fn = ACOES[b.dataset.act]; if (fn) fn(b, e);
 });
 document.addEventListener("keydown", (e) => {
@@ -675,32 +552,18 @@ document.addEventListener("input", (e) => {
   const t = e.target;
   if (t.id === "rk-busca") { F.rk.busca = t.value; F.rk.aberto = null; renderRankingTabela(); }
   else if (t.id === "br-busca") { F.br.busca = t.value; F.br.confirmando = null; renderBrindesLista(); }
-  else if (t.id === "fn-busca") { F.fn.busca = t.value; F.fn.excluindo = null; renderFnTabela(); }
   else if (t.id === "st-nome") F.st.novo = t.value;
 });
 document.addEventListener("change", async (e) => {
   const t = e.target;
   if (t.id === "rk-setor") { F.rk.setor = t.value; F.rk.aberto = null; renderRankingTabela(); }
   else if (t.id === "rk-todas") { F.rk.todas = t.checked; F.rk.aberto = null; renderRankingTabela(); }
-  else if (t.id === "fn-setor") { F.fn.setor = t.value; renderFnTabela(); }
-  else if (t.id === "fn-sit") { F.fn.sit = t.value; renderFnTabela(); }
-  else if (t.id === "fn-criar" && F.fn.imp) { F.fn.imp.criarSetores = t.checked; F.fn.imp.texto = $("#fn-csv").value; if (F.fn.imp.preview) { F.fn.imp.preview = analisarCSV(F.fn.imp.texto, t.checked); $("#fn-form").innerHTML = fnFormHtml(); focar("#fn-criar"); } }
-  else if (t.id === "fn-arquivo" && t.files && t.files[0] && F.fn.imp) {
-    try { F.fn.imp.texto = await lerArquivo(t.files[0]); F.fn.imp.erro = ""; F.fn.imp.preview = analisarCSV(F.fn.imp.texto, $("#fn-criar").checked); }
-    catch { F.fn.imp.erro = "Não foi possível ler o arquivo. Tente salvar de novo como CSV UTF-8."; }
-    $("#fn-form").innerHTML = fnFormHtml(); focar('[data-act="fn-importar-ok"]');
-  }
-  else if (t.id === "cfg-mat") {
-    const valor = t.checked;
-    const r = await executar("config", { exigirMatricula: valor });
-    if (!r) t.checked = !valor;
-  }
 });
 document.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (ocupado) return;
   const id = e.target.id;
-  if (id === "form-fn") salvarFuncionario();
+  if (id === "form-login") entrar();
   else if (id === "form-st") {
     const nome = $("#st-nome").value.trim().replace(/\s+/g, " "); F.st.novo = nome;
     if (nome.length < 2) { F.st.erro = "Informe o nome do setor."; renderSecao(); focar("#st-nome"); return; }
@@ -722,9 +585,9 @@ document.addEventListener("submit", async (e) => {
 /* ================= Atualização automática (painel) ================= */
 // Busca os dados de novo sem atrapalhar quem está digitando ou confirmando algo
 async function atualizarSilencioso() {
-  if (!UI.carregado || ocupado) return;
+  if (!UI.carregado || ocupado || UI.login) return;
   const secao = UI.secao;
-  try { await recarregar(); } catch { return; /* tenta de novo no próximo ciclo */ }
+  try { await recarregar(); } catch (e) { if (e.login) mostrarLogin("Sua sessão expirou. Entre de novo."); return; /* senão, tenta de novo no próximo ciclo */ }
   if (UI.secao !== secao || ocupado) return;
   renderNav();
   const ativo = document.activeElement;
@@ -732,7 +595,6 @@ async function atualizarSilencioso() {
   if (secao === "visao") renderSecao();
   else if (secao === "ranking") renderRankingTabela();
   else if (secao === "brindes" && !F.br.confirmando) renderBrindesLista();
-  else if (secao === "funcionarios" && !F.fn.excluindo) renderFnTabela();
   else if (secao === "setores" && !digitando && !F.st.renomeando && !F.st.excluindo) renderSecao();
   const a = $("#atualizado"); if (a) a.textContent = `Atualizado às ${hora(S.atualizadoEm)}`;
 }
@@ -744,13 +606,44 @@ setInterval(() => {
   atualizarSilencioso();
 }, 20000);
 
+/* ================= Login ================= */
+function mostrarLogin(aviso, erro) {
+  UI.login = true; UI.carregado = false;
+  $("#bo-nav").innerHTML = ""; $("#bo-nav").hidden = true; $(".bo").classList.add("sem-nav"); $("#bt-sair").hidden = true;
+  $("#bo-main").innerHTML = `<form class="login" id="form-login" novalidate>
+    <p class="eyebrow">Painel da CIPA</p><h1 tabindex="-1">Entrar</h1>
+    <p class="pg-sub" style="margin:0">Acesso restrito aos membros da CIPA.</p>
+    ${aviso ? `<p class="aviso-b">${esc(aviso)}</p>` : ""}
+    <div class="fld"><label for="lg-email">E-mail</label><input id="lg-email" class="campo" type="email" autocomplete="username" required></div>
+    <div class="fld"><label for="lg-senha">Senha</label><input id="lg-senha" class="campo" type="password" autocomplete="current-password" required></div>
+    ${erro ? `<p class="aviso-b erro" role="alert">${esc(erro)}</p>` : ""}
+    <button type="submit" class="btn-s">Entrar</button>
+  </form>`;
+  focar("#lg-email");
+}
+async function entrar() {
+  const email = $("#lg-email").value.trim(), senha = $("#lg-senha").value;
+  if (!email || !senha) { mostrarLogin("", "Preencha o e-mail e a senha."); $("#lg-email").value = email; return; }
+  const bt = $("#form-login button"); bt.disabled = true; bt.textContent = "Entrando…";
+  try {
+    await api("POST", "login", { email, senha });
+    iniciar();
+  } catch (e) {
+    mostrarLogin("", e.message); $("#lg-email").value = email; focar("#lg-senha");
+  }
+}
+
 async function iniciar() {
+  UI.login = false;
+  $("#bo-nav").hidden = false; $(".bo").classList.remove("sem-nav");
   $("#bo-main").innerHTML = `<div class="carregando"><span class="giro" aria-hidden="true"></span>Carregando o painel…</div>`;
   try {
     await recarregar();
     UI.carregado = true;
+    $("#bt-sair").hidden = false;
     renderTudo();
   } catch (e) {
+    if (e.login) { mostrarLogin(""); return; }
     $("#bo-main").innerHTML = `<div class="falha" role="alert"><p>${esc(e.message)}</p><button type="button" class="btn-s" data-act="recarregar">Tentar de novo</button></div>`;
   }
 }

@@ -3,7 +3,7 @@
 import http from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PORTA = Number(process.argv[2] || process.env.PORT || 8787);
@@ -13,8 +13,8 @@ if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
   process.exit(1);
 }
 
-const quiz = (await import(path.join(RAIZ, "api/quiz.js"))).default;
-const admin = (await import(path.join(RAIZ, "api/admin.js"))).default;
+const quiz = (await import(pathToFileURL(path.join(RAIZ, "api/quiz.js")).href)).default;
+const admin = (await import(pathToFileURL(path.join(RAIZ, "api/admin.js")).href)).default;
 
 const TIPOS = { ".html": "text/html; charset=utf-8", ".png": "image/png", ".txt": "text/plain", ".css": "text/css", ".js": "text/javascript" };
 

@@ -40,7 +40,7 @@
 html,body{margin:0}
 img{max-width:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-button{font:inherit}
+button,select{font:inherit}
 .wrap{width:100%;max-width:600px;margin-inline:auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 .stripe{height:10px;background:repeating-linear-gradient(-45deg,var(--accent) 0 12px,var(--stripe-gap) 12px 24px)}
 .brand{background:var(--surface);border-bottom:1px solid var(--line)}
@@ -50,6 +50,10 @@ button{font:inherit}
 main{flex:1;padding-block:28px 40px}
 footer{border-top:1px solid var(--line)}
 footer .wrap{padding-block:16px calc(20px + env(safe-area-inset-bottom, 0px));font-size:13.5px;color:var(--muted)}
+.rodape{display:flex;justify-content:space-between;align-items:center;gap:8px 16px;flex-wrap:wrap}
+.area-cipa{display:inline-flex;align-items:center;min-height:32px;color:var(--muted);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.area-cipa:hover{color:var(--accent-ink)}
+.area-cipa:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
 .eyebrow{font:600 13px/1.2 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin:0}
 h1:focus{outline:none}
 .q-h1{font:800 clamp(42px,12vw,58px)/.9 var(--font-display);text-transform:uppercase;margin:8px 0 14px;text-wrap:balance}
@@ -57,32 +61,16 @@ h1:focus{outline:none}
 .regras{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;padding:0;list-style:none}
 .regras li{font-size:14px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink)}
 .aviso{margin:18px 0 0;padding:12px 14px;border-radius:12px;background:var(--bad-soft);font-size:15.5px}
-.aviso.ok{background:var(--ok-soft)}
-.picker{margin-top:28px}
-.picker-l{display:block;font:700 24px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.02em;margin-bottom:10px}
-.busca{position:relative}
-.busca svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-.busca input{width:100%;font:inherit;font-size:17px;padding:13px 14px 13px 44px;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink)}
-.busca input::placeholder{color:var(--muted)}
-.busca input:focus-visible,.q-campo:focus-visible{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-.status-lista{font-size:14px;color:var(--muted);margin:10px 2px 0;font-variant-numeric:tabular-nums}
-.nomes{list-style:none;margin:10px 0 0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.nomes li+li{border-top:1px solid var(--line)}
-.nome-btn{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;cursor:pointer}
-.nome-btn:hover:not(:disabled){background:var(--accent-soft)}
-.nome-btn:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
-.nome-btn:disabled{cursor:not-allowed}
-.nome-btn:disabled .quem,.nome-btn:disabled .iniciais{opacity:.5}
-.iniciais{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 17px/1 var(--font-display);letter-spacing:.03em;background:var(--accent-soft);color:var(--accent-ink)}
-.quem{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
-.quem strong{font-weight:600}
-.quem span{font-size:14px;color:var(--muted)}
-.chip{flex:none;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.chip.feito{background:var(--line);color:var(--muted)}
-.chip.andamento{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--accent)}
-.seta{flex:none;color:var(--accent-ink);display:grid}
-.vazio{padding:20px 16px;color:var(--muted);text-align:center}
-.dica{font-size:14px;color:var(--muted);margin:12px 2px 0}
+.entrada{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 16px 20px}
+.entrada-t{font:700 24px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.02em;margin:0}
+.q-label{display:block;font-weight:600;margin:18px 0 8px}
+.q-campo{width:100%;font:inherit;font-size:18px;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink)}
+.q-campo::placeholder{color:var(--muted)}
+select.q-campo{appearance:none;-webkit-appearance:none;padding-right:44px;background-image:linear-gradient(45deg,transparent 50%,var(--accent-ink) 50%),linear-gradient(135deg,var(--accent-ink) 50%,transparent 50%);background-position:calc(100% - 22px) 52%,calc(100% - 16px) 52%;background-size:6px 6px;background-repeat:no-repeat}
+.q-campo:focus-visible{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.q-campo[aria-invalid="true"]{border-color:var(--bad)}
+.q-err{color:var(--bad);font-size:15px;margin:8px 0 0}
+.q-aj{color:var(--muted);font-size:14px;margin:8px 0 0}
 .carregando{display:flex;align-items:center;gap:12px;color:var(--muted);padding:40px 0}
 .giro{width:22px;height:22px;border-radius:50%;border:3px solid var(--line-strong);border-top-color:var(--accent);animation:giro 1s linear infinite}
 @keyframes giro{to{transform:rotate(360deg)}}
@@ -92,7 +80,9 @@ h1:focus{outline:none}
 .como strong{color:var(--ink);font-weight:600}
 .sair{all:unset;cursor:pointer;font-size:14px;font-weight:600;color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px}
 .sair:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
-.contagem{font:700 18px/1 var(--font-display);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 0;font-variant-numeric:tabular-nums}
+.linha-cont{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:18px 0 0}
+.contagem{font:700 18px/1 var(--font-display);text-transform:uppercase;letter-spacing:.05em;margin:0;font-variant-numeric:tabular-nums}
+.cronometro{display:inline-flex;align-items:center;gap:6px;font:700 18px/1 var(--font-display);letter-spacing:.04em;color:var(--accent-ink);font-variant-numeric:tabular-nums}
 .barra{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:6px;margin:10px 0 26px}
 .barra i{height:6px;border-radius:3px;background:var(--line)}
 .barra i.feita{background:var(--accent)}
@@ -103,42 +93,20 @@ h1:focus{outline:none}
 .q-texto{font:700 clamp(26px,6.8vw,32px)/1.08 var(--font-display);margin:0;text-wrap:balance;min-width:0;flex:1}
 fieldset.opcoes{border:0;margin:24px 0 0;padding:0;display:grid;gap:10px;min-width:0}
 fieldset.opcoes legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.opt{position:relative;display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--line-strong);border-radius:12px;background:var(--surface);cursor:pointer;transition:border-color .15s,background-color .15s,opacity .15s}
+.opt{position:relative;display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--line-strong);border-radius:12px;background:var(--surface);cursor:pointer;transition:border-color .15s,background-color .15s}
 .opt input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
 .opt .l{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 18px/1 var(--font-display);border:2px solid var(--line-strong);color:var(--muted)}
 .opt .t{flex:1;min-width:0;font-weight:500;line-height:1.35}
-.opt .m{flex:none;width:24px;height:24px;display:grid;place-items:center}
 .opt:hover{border-color:var(--accent)}
 .opt:focus-within{outline:3px solid var(--accent);outline-offset:2px}
 .opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .opt.sel .l{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.opcoes.travada .opt{cursor:default}
-.opcoes.travada .opt:hover{border-color:var(--line-strong)}
-.opcoes.travada .opt:focus-within{outline:none}
-.opcoes.travada .opt:not(.certa):not(.errada){opacity:.5}
-.opcoes.travada .opt.certa{border-color:var(--ok);background:var(--ok-soft)}
-.opcoes.travada .opt.certa .l{background:var(--ok);border-color:var(--ok);color:var(--on-ok)}
-.opcoes.travada .opt.certa .m{color:var(--ok)}
-.opcoes.travada .opt.errada{border-color:var(--bad);background:var(--bad-soft)}
-.opcoes.travada .opt.errada .l{background:var(--bad);border-color:var(--bad);color:var(--on-ok)}
-.opcoes.travada .opt.errada .m{color:var(--bad)}
-.retorno{margin-top:18px;padding:14px 16px;border-radius:12px}
-.retorno.ok{background:var(--ok-soft)}
-.retorno.erro{background:var(--bad-soft)}
-.retorno-t{font:700 21px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 4px}
-.retorno.ok .retorno-t{color:var(--ok)}
-.retorno.erro .retorno-t{color:var(--bad)}
-.retorno p{margin:0}
 .acoes{margin-top:22px;display:grid;gap:10px}
 .btn{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;padding:12px 20px;border-radius:12px;font:700 21px/1 var(--font-display);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--btn);color:var(--on-accent);text-align:center}
 .btn:hover:not(:disabled){filter:brightness(1.07)}
 .btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .btn:disabled{background:var(--line);color:var(--muted);cursor:not-allowed}
 .btn.sec{background:transparent;color:var(--accent-ink);border:2px solid var(--accent)}
-.q-campo{width:100%;font:inherit;font-size:22px;letter-spacing:.08em;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
-.q-campo[aria-invalid="true"]{border-color:var(--bad)}
-.q-label{display:block;font-weight:600;margin:20px 0 8px}
-.q-err{color:var(--bad);font-size:15px;margin:8px 0 0}
 
 .vitoria{background:var(--btn);color:var(--on-accent);border-radius:18px;overflow:hidden}
 .vitoria .faixa{height:12px;background:repeating-linear-gradient(-45deg,var(--on-accent) 0 12px,transparent 12px 24px);opacity:.85}
@@ -146,23 +114,46 @@ fieldset.opcoes legend{position:absolute;width:1px;height:1px;overflow:hidden;cl
 .bombom{width:68px;height:68px;border-radius:50%;background:var(--on-accent);color:var(--btn);display:grid;place-items:center}
 .vitoria h1{font:800 clamp(36px,10vw,50px)/.92 var(--font-display);text-transform:uppercase;margin:0;text-wrap:balance}
 .vitoria .retire{font:700 clamp(21px,5.6vw,26px)/1.12 var(--font-display);text-transform:uppercase;letter-spacing:.03em;margin:0;padding-top:16px;border-top:2px dashed currentColor;width:100%}
-.comprovante{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
-.comprovante h2{font:700 14px/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.cartao{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.cartao h2{font:700 14px/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
 .comprovante dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0}
 .comprovante dt{color:var(--muted);font-size:15px}
 .comprovante dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums;min-width:0}
 .codigo{font:700 26px/1 var(--font-display);letter-spacing:.18em;color:var(--accent-ink)}
-.comprovante .nota{font-size:14px;color:var(--muted);margin:14px 0 0}
+.nota{font-size:14px;color:var(--muted);margin:14px 0 0}
 .derrota{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 20px}
 .derrota h1{font:800 clamp(32px,8.5vw,42px)/.98 var(--font-display);text-transform:uppercase;margin:0 0 10px;text-wrap:balance}
 .derrota .lead{color:var(--ink)}
-.revisao{list-style:none;margin:20px 0 0;padding:0;display:grid}
+.placar{display:flex;gap:6px;margin:0 0 14px}
+.placar i{width:28px;height:8px;border-radius:4px;background:var(--bad)}
+.placar i.on{background:var(--ok)}
+.revisao{list-style:none;margin:0;padding:0;display:grid}
 .revisao li{display:flex;gap:12px;align-items:flex-start;padding-block:12px;border-top:1px solid var(--line)}
+.revisao li:first-child{border-top:0;padding-top:0}
 .ic{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
 .ic.ok{background:var(--ok);color:var(--on-ok)}
 .ic.erro{background:var(--bad);color:var(--on-ok)}
 .revisao p{margin:0;font-weight:600;line-height:1.35}
-.revisao small{display:block;color:var(--muted);font-size:14px;font-weight:400;margin-top:2px}
+.revisao small{display:block;color:var(--muted);font-size:14.5px;font-weight:400;margin-top:3px}
+.revisao small b{font-weight:600;color:var(--ink)}
+.revisao .certo-t{color:var(--ok)}
+.revisao .errado-t{color:var(--bad)}
+.rank-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px 12px;flex-wrap:wrap;margin-bottom:4px}
+.rank-head h2{margin:0}
+.rank-sub{font-size:14px;color:var(--muted);margin:0 0 10px}
+.ranking{list-style:none;margin:0;padding:0}
+.ranking li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 8px;border-top:1px solid var(--line);border-radius:10px}
+.ranking li:first-child{border-top-color:transparent}
+.ranking li.eu{background:var(--accent-soft);border-top-color:transparent}
+.ranking li.eu + li{border-top-color:transparent}
+.ranking li.sep{display:block;text-align:center;color:var(--muted);padding:4px;border-top:0}
+.pos{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;font:700 17px/1 var(--font-display);background:var(--line);color:var(--ink);font-variant-numeric:tabular-nums}
+.pos.top{background:var(--btn);color:var(--on-accent)}
+.rk-nome{min-width:0;line-height:1.25}
+.rk-nome strong{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk-nome span{font-size:13.5px;color:var(--muted)}
+.rk-tempo{font:700 19px/1 var(--font-display);font-variant-numeric:tabular-nums;color:var(--accent-ink)}
+.vazio{padding:16px 0 4px;color:var(--muted);text-align:center}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -175,7 +166,7 @@ fieldset.opcoes legend{position:absolute;width:1px;height:1px;overflow:hidden;cl
   </div>
 </header>
 <main class="wrap" id="app" aria-live="polite"></main>
-<footer><div class="wrap"><strong>CIPA Momesso</strong> · Comissão Interna de Prevenção de Acidentes e de Assédio</div></footer>
+<footer><div class="wrap rodape"><span><strong>CIPA Momesso</strong> · Comissão Interna de Prevenção de Acidentes e de Assédio</span><a class="area-cipa" href="/painel">Área da CIPA</a></div></footer>
 
 <script>
 const SVG = (inner, size, sw) => `<svg width="${size || 30}" height="${size || 30}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 1.9}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
@@ -188,21 +179,28 @@ const ICONES = {
 };
 const CERTO = (s) => SVG('<path d="M5 12.5l4.5 4.5L19 7.5"/>', s || 20, 2.6);
 const ERRADO = (s) => SVG('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>', s || 20, 2.6);
-const SETA = SVG('<path d="M9 5l7 7-7 7"/>', 20);
-const LUPA = SVG('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>', 20, 2);
+const RELOGIO = SVG('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/>', 18, 2.2);
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
-const norm = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-const iniciais = (nome) => { const p = nome.trim().split(/\s+/); return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase(); };
 const dataHora = (i) => new Intl.DateTimeFormat("pt-BR", { timeZone:"America/Sao_Paulo", day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" }).format(new Date(i)).replace(",", " às");
+// 4200 -> "4,2 s" · 65000 -> "1 min 05 s"
+function tempo(ms) {
+  const s = Math.max(0, ms) / 1000;
+  if (s < 60) return s.toFixed(1).replace(".", ",") + " s";
+  const m = Math.floor(s / 60);
+  return `${m} min ${String(Math.floor(s % 60)).padStart(2, "0")} s`;
+}
+const relogio = (ms) => { const s = Math.floor(Math.max(0, ms) / 1000); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
 
 const Q = {
-  tela:"carregando", erroTela:"", aviso:"", busca:"",
-  funcionarios:[], perguntas:[], exigirMatricula:false,
-  func:null, sessao:null, idx:0, escolha:null, retorno:null, resultado:null,
-  enviando:false, erroMat:"", erroPergunta:"", precisaRecomecar:false
+  tela:"carregando", erroTela:"", aviso:"",
+  setores:[], perguntas:[],
+  nome:"", setorId:"", erros:{},
+  sessao:null, idx:0, escolha:null, resultado:null, ranking:[],
+  inicioLocal:0, enviando:false, erroPergunta:"", precisaRecomecar:false, atualizandoRanking:false
 };
+let timer = null;
 
 async function api(acao, corpo) {
   let r;
@@ -222,150 +220,170 @@ async function api(acao, corpo) {
 /* ---------- Telas ---------- */
 function render(focarTitulo) {
   const app = $("#app");
-  if (Q.tela === "carregando") app.innerHTML = `<div class="carregando"><span class="giro" aria-hidden="true"></span>Carregando a lista de nomes…</div>`;
+  if (Q.tela === "carregando") app.innerHTML = `<div class="carregando"><span class="giro" aria-hidden="true"></span>Carregando o quiz…</div>`;
   else if (Q.tela === "falha") app.innerHTML = `<p class="eyebrow">CIPA Momesso</p><h1 class="q-h1" tabindex="-1">Quiz da Segurança</h1>
       <p class="aviso">${esc(Q.erroTela)}</p><div class="acoes"><button type="button" class="btn" data-act="recarregar">Tentar de novo</button></div>`;
-  else if (Q.tela === "nomes") { app.innerHTML = telaNomes(); renderLista(); }
-  else if (Q.tela === "matricula") app.innerHTML = telaMatricula();
+  else if (Q.tela === "entrada") app.innerHTML = telaEntrada();
   else if (Q.tela === "pergunta") app.innerHTML = telaPergunta();
   else if (Q.tela === "resultado") app.innerHTML = telaResultado();
   if (focarTitulo) { const h = app.querySelector("h1"); if (h) h.focus({ preventScroll:true }); window.scrollTo(0, 0); }
 }
 
-function telaNomes() {
+function telaEntrada() {
+  const n = Q.perguntas.length, e = Q.erros;
+  const semSetor = !Q.setores.length;
   return `<p class="eyebrow">CIPA Momesso</p>
   <h1 class="q-h1" tabindex="-1">Quiz da Segurança</h1>
-  <p class="lead">${Q.perguntas.length} perguntas sobre as regras de circulação no estacionamento da empresa. Escolha seu nome para começar.</p>
-  <ul class="regras"><li>${Q.perguntas.length} perguntas</li><li>1 tentativa por pessoa</li><li>Acertou todas, ganha brinde</li></ul>
+  <p class="lead">${n} perguntas sobre as regras de circulação no estacionamento da empresa. Você vê o resultado e as respostas certas no final.</p>
+  <ul class="regras"><li>${n} perguntas</li><li>1 tentativa por pessoa</li><li>Acertou todas, ganha brinde</li><li>Os mais rápidos lideram o ranking</li></ul>
   ${Q.aviso ? `<p class="aviso" role="alert">${esc(Q.aviso)}</p>` : ""}
-  <div class="picker">
-    <label class="picker-l" for="busca">Selecione seu nome</label>
-    <div class="busca">${LUPA}<input id="busca" type="search" placeholder="Digite parte do nome ou setor" autocomplete="off" value="${esc(Q.busca)}"></div>
-    <p id="status-lista" class="status-lista"></p>
-    <ul id="lista" class="nomes"></ul>
-    <p class="dica">Não encontrou seu nome? Fale com um membro da CIPA.</p>
-  </div>`;
-}
-function renderLista() {
-  const termo = norm(Q.busca);
-  const todos = Q.funcionarios;
-  const lista = todos.filter((f) => norm(f.nome + " " + f.setor).includes(termo))
-    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
-  $("#lista").innerHTML = lista.length ? lista.map((f) => {
-    const fim = f.situacao === "concluida" ? `<span class="chip feito">Já respondeu</span>`
-      : f.situacao === "em_andamento" ? `<span class="chip andamento">Continuar</span>` : `<span class="seta">${SETA}</span>`;
-    return `<li><button type="button" class="nome-btn" data-act="nome" data-f="${esc(f.id)}" ${f.situacao === "concluida" ? "disabled" : ""} ${Q.enviando ? "aria-disabled=\"true\"" : ""}>
-      <span class="iniciais">${esc(iniciais(f.nome))}</span>
-      <span class="quem"><strong>${esc(f.nome)}</strong><span>${esc(f.setor)}</span></span>${fim}</button></li>`;
-  }).join("") : `<li class="vazio">${todos.length ? `Nenhum nome encontrado para "${esc(Q.busca.trim())}".` : "A lista de nomes ainda está vazia. Fale com um membro da CIPA."}</li>`;
-  const feitos = todos.filter((f) => f.situacao === "concluida").length;
-  $("#status-lista").textContent = todos.length ? `${feitos} de ${todos.length} já responderam` : "";
-}
-function telaMatricula() {
-  return `<button type="button" class="sair" data-act="voltar">Voltar para a lista</button>
-  <p class="eyebrow" style="margin-top:20px">Confirme quem é você</p>
-  <h1 class="q-h1" style="font-size:clamp(36px,10vw,46px)" tabindex="-1">Olá, ${esc(Q.func.nome.split(" ")[0])}</h1>
-  <p class="lead">Para começar, digite sua matrícula.</p>
-  <form id="form-mat" novalidate>
-    <label class="q-label" for="mat">Matrícula</label>
-    <input id="mat" class="q-campo" inputmode="numeric" autocomplete="off" aria-describedby="mat-err" ${Q.erroMat ? 'aria-invalid="true"' : ""}>
-    <p id="mat-err" class="q-err" ${Q.erroMat ? "" : "hidden"}>${esc(Q.erroMat)}</p>
-    <div class="acoes"><button type="submit" class="btn" ${Q.enviando ? "disabled" : ""}>${Q.enviando ? "Conferindo…" : "Começar o quiz"}</button></div>
+  <form id="form-entrada" class="entrada" novalidate>
+    <h2 class="entrada-t">Identifique-se</h2>
+    <label class="q-label" for="nome">Seu nome e sobrenome</label>
+    <input id="nome" class="q-campo" maxlength="120" autocomplete="name" autocapitalize="words" spellcheck="false" value="${esc(Q.nome)}" aria-describedby="nome-err" ${e.nome ? 'aria-invalid="true"' : ""}>
+    <p id="nome-err" class="q-err" ${e.nome ? "" : "hidden"}>${esc(e.nome || "")}</p>
+    <label class="q-label" for="setor">Seu setor</label>
+    <select id="setor" class="q-campo" aria-describedby="setor-err" ${e.setor ? 'aria-invalid="true"' : ""} ${semSetor ? "disabled" : ""}>
+      <option value="">${semSetor ? "Nenhum setor cadastrado ainda" : "Escolha seu setor"}</option>
+      ${Q.setores.map((s) => `<option value="${esc(s.id)}" ${s.id === Q.setorId ? "selected" : ""}>${esc(s.nome)}</option>`).join("")}
+    </select>
+    <p id="setor-err" class="q-err" ${e.setor ? "" : "hidden"}>${esc(e.setor || "")}</p>
+    <p class="q-aj">O tempo começa a contar quando você tocar em Começar.</p>
+    <div class="acoes"><button type="submit" class="btn" ${Q.enviando || semSetor ? "disabled" : ""}>${Q.enviando ? "Entrando…" : "Começar o quiz"}</button></div>
+    ${semSetor ? `<p class="q-aj">Fale com um membro da CIPA.</p>` : ""}
   </form>`;
 }
 function telaPergunta() {
   const p = Q.perguntas[Q.idx], n = Q.perguntas.length, ultima = Q.idx === n - 1;
-  const r = Q.retorno, validada = !!r;
-  const opts = Object.keys(p.opcoes).sort().map((l) => {
-    let cls = "opt", marca = "";
-    if (validada) { if (l === r.letraCorreta) { cls += " certa"; marca = CERTO(); } else if (l === Q.escolha) { cls += " errada"; marca = ERRADO(); } }
-    else if (l === Q.escolha) cls += " sel";
-    return `<label class="${cls}" for="op-${l}" data-letra="${l}"><input type="radio" name="resp" id="op-${l}" value="${l}" ${Q.escolha === l ? "checked" : ""} ${validada || Q.enviando ? "disabled" : ""}><span class="l">${l}</span><span class="t">${esc(p.opcoes[l])}</span><span class="m">${marca}</span></label>`;
-  }).join("");
-  let botoes;
-  if (Q.precisaRecomecar) botoes = `<button type="button" class="btn" data-act="voltar">Voltar para a lista</button>`;
-  else if (validada) botoes = `<button type="button" id="prox" class="btn" data-act="proxima">${r.concluida ? "Ver resultado" : "Próxima pergunta"}</button>`;
-  else botoes = `<button type="button" id="conf" class="btn" data-act="confirmar" ${Q.escolha && !Q.enviando ? "" : "disabled"}>${Q.enviando ? "Conferindo…" : "Confirmar resposta"}</button>`;
-  return `<div class="q-topo"><p class="como">Respondendo como <strong>${esc(Q.func.nome)}</strong></p>
-    ${validada && r.concluida ? "" : `<button type="button" class="sair" data-act="voltar">Sair e continuar depois</button>`}</div>
-  <p class="contagem">Pergunta ${Q.idx + 1} de ${n}</p>
-  <div class="barra" style="--n:${n}" aria-hidden="true">${Q.perguntas.map((_, i) => `<i class="${i < Q.idx || (i === Q.idx && validada) ? "feita" : i === Q.idx ? "atual" : ""}"></i>`).join("")}</div>
+  const opts = Object.keys(p.opcoes).sort().map((l) =>
+    `<label class="opt ${l === Q.escolha ? "sel" : ""}" for="op-${l}" data-letra="${l}"><input type="radio" name="resp" id="op-${l}" value="${l}" ${Q.escolha === l ? "checked" : ""} ${Q.enviando ? "disabled" : ""}><span class="l">${l}</span><span class="t">${esc(p.opcoes[l])}</span></label>`).join("");
+  const botao = Q.precisaRecomecar
+    ? `<button type="button" class="btn" data-act="voltar">Voltar ao início</button>`
+    : `<button type="button" id="conf" class="btn" data-act="confirmar" ${Q.escolha && !Q.enviando ? "" : "disabled"}>${Q.enviando ? "Enviando…" : ultima ? "Finalizar quiz" : "Confirmar e avançar"}</button>`;
+  return `<div class="q-topo"><p class="como">Respondendo como <strong>${esc(Q.sessao.nome)}</strong> · ${esc(Q.sessao.setor)}</p>
+    <button type="button" class="sair" data-act="voltar">Sair e continuar depois</button></div>
+  <div class="linha-cont"><p class="contagem">Pergunta ${Q.idx + 1} de ${n}</p><span class="cronometro" aria-label="Tempo">${RELOGIO}<span id="cron">${relogio(Date.now() - Q.inicioLocal)}</span></span></div>
+  <div class="barra" style="--n:${n}" aria-hidden="true">${Q.perguntas.map((_, i) => `<i class="${i < Q.idx ? "feita" : i === Q.idx ? "atual" : ""}"></i>`).join("")}</div>
   <div class="q-head"><div class="q-icone" aria-hidden="true">${ICONES[p.icone] || ICONES.padrao}<b>${String(Q.idx + 1).padStart(2, "0")}</b></div>
     <h1 class="q-texto" tabindex="-1">${esc(p.texto)}</h1></div>
-  <fieldset class="opcoes ${validada ? "travada" : ""}"><legend>${esc(p.texto)}</legend>${opts}</fieldset>
-  ${validada ? `<div class="retorno ${r.acertou ? "ok" : "erro"}" role="status"><p class="retorno-t">${r.acertou ? "Resposta certa!" : "Resposta incorreta"}</p><p>${esc(r.acertou ? r.frase : `A resposta certa é ${r.letraCorreta}) ${r.textoCorreto}.`)}</p></div>` : ""}
+  <fieldset class="opcoes"><legend>${esc(p.texto)}</legend>${opts}</fieldset>
   ${Q.erroPergunta ? `<p class="aviso" role="alert">${esc(Q.erroPergunta)}</p>` : ""}
-  <div class="acoes">${botoes}</div>`;
+  <div class="acoes">${botao}</div>`;
 }
 function telaResultado() {
-  const t = Q.resultado;
-  if (t.acertos === t.total) {
-    return `<div class="vitoria"><div class="faixa" aria-hidden="true"></div><div class="vitoria-corpo">
+  const t = Q.resultado, perfeito = t.acertos === t.total;
+  const pos = posicoes(Q.ranking);
+  const minha = pos.find((r) => r.id === t.id);
+  const topo = perfeito
+    ? `<div class="vitoria"><div class="faixa" aria-hidden="true"></div><div class="vitoria-corpo">
       <div class="bombom" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4.6"/><path d="M7.6 12L2.5 8.2v7.6zM16.4 12l5.1-3.8v7.6z"/></svg></div>
       <h1 tabindex="-1">Parabéns, você acertou todas as perguntas!</h1>
       <p class="retire">Retire seu brinde com o setor responsável</p></div></div>
-    <div class="comprovante"><h2>Comprovante de participação</h2><dl>
+    <div class="cartao comprovante"><h2>Comprovante de participação</h2><dl>
       <dt>Nome</dt><dd>${esc(t.nome)}</dd><dt>Setor</dt><dd>${esc(t.setor)}</dd>
-      <dt>Resultado</dt><dd>${t.acertos} de ${t.total} perguntas</dd><dt>Concluído em</dt><dd>${esc(dataHora(t.concluidaEm))}</dd>
+      <dt>Resultado</dt><dd>${t.acertos} de ${t.total} perguntas</dd>
+      <dt>Tempo</dt><dd>${esc(tempo(t.ms))}${minha ? ` · ${minha.pos}º lugar no ranking` : ""}</dd>
+      <dt>Concluído em</dt><dd>${esc(dataHora(t.concluidaEm))}</dd>
       <dt>Código</dt><dd class="codigo">${esc(t.codigo)}</dd></dl>
-      <p class="nota">Mostre esta tela no momento da retirada. Se preferir, tire um print.</p></div>
+      <p class="nota">Mostre esta tela no momento da retirada. Se preferir, tire um print.</p></div>`
+    : `<div class="derrota"><div class="placar" aria-hidden="true">${(t.revisao || []).map((x) => `<i class="${x.acertou ? "on" : ""}"></i>`).join("")}</div>
+      <h1 tabindex="-1">Você acertou ${t.acertos} de ${t.total} perguntas</h1>
+      <p class="lead">Para ganhar o brinde e entrar no ranking era preciso acertar todas. Sua participação foi registrada. Confira abaixo as respostas certas e leve essas regras para o dia a dia.</p></div>`;
+  const rev = (t.revisao || []).map((x, i) => `<li><span class="ic ${x.acertou ? "ok" : "erro"}">${x.acertou ? CERTO(15) : ERRADO(15)}</span><div style="min-width:0"><p>${i + 1}. ${esc(x.texto)}</p>${x.acertou
+    ? `<small class="certo-t">Sua resposta: <b>${esc(x.marcada)}) ${esc(x.textoMarcada)}</b></small>`
+    : `<small class="errado-t">Sua resposta: <b>${x.marcada ? `${esc(x.marcada)}) ${esc(x.textoMarcada)}` : "não respondida"}</b></small><small class="certo-t">Resposta certa: <b>${esc(x.certa)}) ${esc(x.textoCerto)}</b></small>`}</div></li>`).join("");
+  return topo +
+    `<section class="cartao"><h2>Suas respostas · ${t.acertos} certa${t.acertos === 1 ? "" : "s"} e ${t.total - t.acertos} errada${t.total - t.acertos === 1 ? "" : "s"}</h2><ul class="revisao">${rev}</ul></section>
+    <section class="cartao" id="ranking">${rankingHtml(pos, t.id)}</section>
     <div class="acoes"><button type="button" class="btn sec" data-act="inicio">Voltar ao início</button></div>`;
+}
+
+/* ---------- Ranking ---------- */
+// Mesmo tempo (ao milésimo) divide a posição
+function posicoes(lista) {
+  const out = [];
+  lista.forEach((r, i) => { const ant = out[i - 1]; out.push({ ...r, pos: ant && ant.ms === r.ms ? ant.pos : i + 1 }); });
+  return out;
+}
+const MOSTRAR = 10;
+function rankingHtml(pos, meuId) {
+  const linha = (r) => `<li class="${r.id === meuId ? "eu" : ""}"><span class="pos ${r.pos <= 3 ? "top" : ""}">${r.pos}</span>
+    <span class="rk-nome"><strong>${esc(r.nome)}${r.id === meuId ? " (você)" : ""}</strong><span>${esc(r.setor)}</span></span><span class="rk-tempo">${esc(tempo(r.ms))}</span></li>`;
+  let itens;
+  if (!pos.length) itens = `<li class="vazio">Ninguém acertou todas ainda.</li>`;
+  else {
+    const i = pos.findIndex((r) => r.id === meuId);
+    itens = pos.slice(0, MOSTRAR).map(linha).join("");
+    if (i >= MOSTRAR) itens += (i > MOSTRAR ? `<li class="sep" aria-hidden="true">⋯</li>` : "") + linha(pos[i]);
   }
-  const rev = (t.revisao || []).map((x) => `<li><span class="ic ${x.acertou ? "ok" : "erro"}">${x.acertou ? CERTO(15) : ERRADO(15)}</span><div style="min-width:0"><p>${esc(x.texto)}<small>${x.acertou
-    ? `Sua resposta: ${esc(x.certa)}) ${esc(x.textoCerto)}` : `Certa: ${esc(x.certa)}) ${esc(x.textoCerto)} · Você marcou ${esc(x.marcada || "-")}`}</small></p></div></li>`).join("");
-  return `<div class="derrota"><h1 tabindex="-1">Você acertou ${t.acertos} de ${t.total} perguntas</h1>
-    <p class="lead">Para ganhar o brinde era preciso acertar todas. Sua participação foi registrada. Confira as respostas certas e leve essas regras para o dia a dia.</p>
-    <ul class="revisao">${rev}</ul></div>
-  <div class="acoes"><button type="button" class="btn sec" data-act="inicio">Voltar ao início</button></div>`;
+  const resto = pos.length > MOSTRAR ? ` · mostrando os ${MOSTRAR} primeiros` : "";
+  return `<div class="rank-head"><h2>Ranking · quem acertou todas</h2><button type="button" class="sair" data-act="atualizar-ranking" ${Q.atualizandoRanking ? "disabled" : ""}>${Q.atualizandoRanking ? "Atualizando…" : "Atualizar"}</button></div>
+    <p class="rank-sub">Do mais rápido ao mais lento. ${pos.length} pessoa${pos.length === 1 ? "" : "s"} no ranking${resto}.</p>
+    <ol class="ranking">${itens}</ol>`;
 }
 
 /* ---------- Fluxo ---------- */
+function pararCronometro() { clearInterval(timer); timer = null; }
+function ligarCronometro() {
+  pararCronometro();
+  timer = setInterval(() => { const c = $("#cron"); if (c) c.textContent = relogio(Date.now() - Q.inicioLocal); else pararCronometro(); }, 500);
+}
 async function carregar(manterAviso) {
+  pararCronometro();
   if (!manterAviso) Q.aviso = "";
   Q.tela = "carregando"; render();
   try {
     const d = await api("inicio");
-    Q.funcionarios = d.funcionarios; Q.perguntas = d.perguntas; Q.exigirMatricula = d.exigirMatricula;
-    Q.tela = "nomes";
+    Q.setores = d.setores; Q.perguntas = d.perguntas;
+    if (Q.setorId && !Q.setores.some((s) => s.id === Q.setorId)) Q.setorId = "";
+    Q.tela = "entrada";
   } catch (e) { Q.tela = "falha"; Q.erroTela = e.message; }
   render(true);
 }
-async function iniciar(matricula) {
-  Q.enviando = true; Q.erroMat = ""; render();
+async function iniciar() {
+  Q.enviando = true; Q.aviso = ""; render();
   try {
-    const d = await api("iniciar", { funcionarioId: Q.func.id, matricula });
-    Q.sessao = { tentativaId: d.tentativaId, token: d.token };
-    Q.func.nome = d.nome;
+    const d = await api("iniciar", { nome: Q.nome, setorId: Q.setorId });
+    Q.sessao = { tentativaId: d.tentativaId, token: d.token, nome: d.nome, setor: d.setor };
+    // Cronômetro local alinhado ao relógio do servidor (vale também ao retomar)
+    Q.inicioLocal = Date.now() - (Date.parse(d.agora) - Date.parse(d.iniciadaEm));
     const feitas = new Set(d.respondidas);
     Q.idx = Math.max(0, Q.perguntas.findIndex((p) => !feitas.has(p.id)));
-    Q.escolha = null; Q.retorno = null; Q.erroPergunta = ""; Q.precisaRecomecar = false;
-    Q.enviando = false; Q.tela = "pergunta"; render(true);
+    Q.escolha = null; Q.erroPergunta = ""; Q.precisaRecomecar = false;
+    Q.enviando = false; Q.tela = "pergunta"; render(true); ligarCronometro();
   } catch (e) {
     Q.enviando = false;
-    if (Q.tela === "matricula" && e.codigo !== "ja_respondeu" && e.codigo !== "nao_encontrado") { Q.erroMat = e.message; render(); const m = $("#mat"); if (m) m.focus(); }
-    else { Q.aviso = e.message; await carregar(true); }
+    if (e.codigo === "setor_invalido") { Q.setorId = ""; Q.aviso = e.message; await carregar(true); return; }
+    if (e.status === 400 && /nome/i.test(e.message)) Q.erros = { nome: e.message };
+    else Q.aviso = e.message;
+    render(); const n = Q.erros.nome ? $("#nome") : null; if (n) n.focus();
   }
 }
 async function confirmar() {
-  if (!Q.escolha || Q.retorno || Q.enviando) return;
+  if (!Q.escolha || Q.enviando) return;
   const p = Q.perguntas[Q.idx];
   Q.enviando = true; Q.erroPergunta = ""; render();
   try {
-    const r = await api("responder", { ...Q.sessao, perguntaId: p.id, letra: Q.escolha });
-    Q.retorno = r;
-    if (r.concluida) Q.resultado = r.resultado;
-    Q.enviando = false; render(); const b = $("#prox"); if (b) b.focus();
+    const r = await api("responder", { tentativaId: Q.sessao.tentativaId, token: Q.sessao.token, perguntaId: p.id, letra: Q.escolha });
+    Q.enviando = false;
+    if (r.concluida) {
+      pararCronometro();
+      Q.resultado = r.resultado; Q.ranking = r.ranking || [];
+      Q.tela = "resultado"; render(true); return;
+    }
+    Q.idx++; Q.escolha = null; render(true);
   } catch (e) {
     Q.enviando = false; Q.erroPergunta = e.message;
-    Q.precisaRecomecar = ["sessao_invalida", "fora_de_ordem", "ja_respondeu", "nao_encontrado"].includes(e.codigo);
+    Q.precisaRecomecar = ["sessao_invalida", "fora_de_ordem", "ja_respondeu"].includes(e.codigo);
+    if (Q.precisaRecomecar) pararCronometro();
     render();
   }
 }
-function proxima() {
-  if (!Q.retorno) return;
-  if (Q.retorno.concluida) { Q.tela = "resultado"; render(true); return; }
-  Q.idx++; Q.escolha = null; Q.retorno = null; Q.erroPergunta = "";
-  render(true);
+async function atualizarRanking() {
+  if (Q.atualizandoRanking) return;
+  Q.atualizandoRanking = true; $("#ranking").innerHTML = rankingHtml(posicoes(Q.ranking), Q.resultado.id);
+  try { Q.ranking = (await api("ranking")).ranking; } catch {}
+  Q.atualizandoRanking = false; $("#ranking").innerHTML = rankingHtml(posicoes(Q.ranking), Q.resultado.id);
 }
 
 /* ---------- Eventos ---------- */
@@ -374,23 +392,13 @@ document.addEventListener("click", (e) => {
   if (!b || b.disabled) return;
   const a = b.dataset.act;
   if (a === "recarregar") carregar();
-  else if (a === "nome") {
-    if (Q.enviando) return;
-    const f = Q.funcionarios.find((x) => x.id === b.dataset.f);
-    if (!f || f.situacao === "concluida") return;
-    Q.func = { id: f.id, nome: f.nome };
-    if (Q.exigirMatricula) { Q.erroMat = ""; Q.tela = "matricula"; render(true); const m = $("#mat"); if (m) m.focus(); }
-    else iniciar(null);
-  }
-  else if (a === "voltar" || a === "inicio") { Q.func = null; Q.sessao = null; Q.busca = a === "inicio" ? "" : Q.busca; carregar(); }
+  else if (a === "voltar") { Q.sessao = null; carregar(); }
+  else if (a === "inicio") { Q.sessao = null; Q.resultado = null; Q.nome = ""; Q.setorId = ""; Q.erros = {}; carregar(); }
   else if (a === "confirmar") confirmar();
-  else if (a === "proxima") proxima();
-});
-document.addEventListener("input", (e) => {
-  if (e.target.id === "busca") { Q.busca = e.target.value; renderLista(); }
+  else if (a === "atualizar-ranking") atualizarRanking();
 });
 document.addEventListener("change", (e) => {
-  if (e.target.name === "resp" && !Q.retorno && !Q.enviando) {
+  if (e.target.name === "resp" && !Q.enviando) {
     Q.escolha = e.target.value;
     document.querySelectorAll("#app .opt").forEach((n) => n.classList.toggle("sel", n.dataset.letra === Q.escolha));
     const c = $("#conf"); if (c) c.disabled = false;
@@ -398,11 +406,15 @@ document.addEventListener("change", (e) => {
 });
 document.addEventListener("submit", (e) => {
   e.preventDefault();
-  if (e.target.id === "form-mat" && !Q.enviando) {
-    const v = $("#mat").value.trim();
-    if (!v) { Q.erroMat = "Digite sua matrícula."; render(); $("#mat").focus(); return; }
-    iniciar(v);
-  }
+  if (e.target.id !== "form-entrada" || Q.enviando) return;
+  Q.nome = $("#nome").value.trim().replace(/\s+/g, " ");
+  Q.setorId = $("#setor").value;
+  const er = {};
+  if (Q.nome.split(" ").filter((p) => p.length >= 2).length < 2) er.nome = "Digite seu nome e sobrenome.";
+  if (!Q.setorId) er.setor = "Escolha seu setor.";
+  Q.erros = er;
+  if (Object.keys(er).length) { render(); $(er.nome ? "#nome" : "#setor").focus(); return; }
+  iniciar();
 });
 
 carregar();
