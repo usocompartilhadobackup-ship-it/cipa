@@ -1,36 +1,42 @@
-# Protótipo Quiz CIPA Momesso na Vercel
+# Quiz da Segurança CIPA Momesso
 
-Site estático (`index.html`) protegido por usuário e senha (`middleware.js`).
-O navegador pede o login antes de mostrar qualquer coisa.
+- **Quiz** (para os funcionários): `https://cipa-rosy.vercel.app/`
+- **Painel da CIPA e Administração**: `https://cipa-rosy.vercel.app/painel`
 
-## Publicar pela linha de comando
+O site é aberto, sem senha. Quem tiver o link do painel consegue cadastrar funcionários,
+mudar configurações e registrar a entrega de brindes, então compartilhe o link do painel
+só com quem cuida do quiz.
 
-Precisa do Node.js instalado. Dentro desta pasta:
+Tudo fica salvo no Supabase (projeto `quiz-cipa-momesso`). As regras importantes são
+garantidas pelo próprio banco:
 
-```bash
-npx vercel login
-npx vercel link            # cria o projeto; aceite as opções sugeridas
-npx vercel env add BASIC_AUTH_USER production
-npx vercel env add BASIC_AUTH_PASSWORD production
-npx vercel --prod
+- cada funcionário responde uma única vez;
+- respostas registradas não podem ser alteradas nem apagadas;
+- a resposta certa só sai do banco depois que a pessoa responde.
+
+## Estrutura
+
+```
+api/quiz.js        API do quiz (lista de nomes, iniciar, responder)
+api/admin.js       API do painel (estado, cadastros, brindes, configuração)
+lib/               conexão com o banco e utilidades
+public/            páginas (index.html = quiz, painel.html = painel) e logos
+supabase/          SQL do banco e script para limpar testes
 ```
 
-Nos dois `env add`, o terminal pede o valor: digite o usuário e depois a senha que você quer usar.
+## Ligação com o Supabase
 
-## Publicar pelo GitHub
+A API lê a conexão da variável `DATABASE_URL` ou `POSTGRES_URL` (esta é criada
+automaticamente quando o projeto do Supabase é conectado à Vercel pela integração).
+Use sempre a conexão do **pooler em modo transação** (porta 6543).
 
-1. Suba esta pasta para um repositório **privado** no GitHub.
-2. Na Vercel: **Add New › Project**, importe o repositório e deixe o Framework como **Other**.
-3. Antes de clicar em Deploy, abra **Environment Variables** e crie `BASIC_AUTH_USER` e `BASIC_AUTH_PASSWORD`.
-4. Clique em **Deploy**.
+## Antes de liberar para os funcionários
 
-## Trocar a senha
+As respostas dos testes ficam gravadas e não dá para apagar pelo painel. Quando terminar
+de testar, rode `supabase/limpar-testes.sql` no SQL Editor do Supabase. Ele apaga só as
+respostas: funcionários e setores continuam. Depois que o quiz começar de verdade, não rode mais.
 
-Em **Settings › Environment Variables**, altere `BASIC_AUTH_PASSWORD` e publique de novo
-(`npx vercel --prod` ou **Redeploy** no painel). A senha nova só vale depois disso.
+## Banco do zero
 
-## Observações
-
-- Sem as duas variáveis, o site responde "Site bloqueado". Ele nunca abre sem senha.
-- Use usuário e senha sem acentos para evitar problemas em alguns navegadores.
-- Este é o protótipo: nada fica salvo. Cada pessoa que abre vê a própria cópia, e tudo some ao recarregar.
+Se um dia precisar recriar o banco em outro projeto, rode `supabase/01-banco.sql` no
+SQL Editor de um projeto novo.

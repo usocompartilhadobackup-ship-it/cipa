@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F07A1E">
+<title>Quiz da Segurança CIPA Momesso</title>
+<link rel="icon" href="/img/logo-cipa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#FFF8F2; --surface:#FFFFFF; --ink:#2B1E14; --muted:#7A6455;
+  --line:#F1E2D4; --line-strong:#E4CDBA;
+  --accent:#F07A1E; --accent-ink:#BF560A; --accent-soft:#FFEEDF;
+  --btn:#D9640F; --on-accent:#FFFFFF;
+  --ok:#23873A; --ok-soft:#E6F4E9; --on-ok:#FFFFFF;
+  --bad:#C2372C; --bad-soft:#FCEBE8;
+  --stripe-gap:#FFFFFF;
+  --font-display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --font-body:"Barlow","Segoe UI",Roboto,system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#17110C; --surface:#221912; --ink:#F7EDE4; --muted:#B9A595;
+    --line:#382A20; --line-strong:#4C3A2D;
+    --accent:#FF8A33; --accent-ink:#FFA05A; --accent-soft:#3A2414;
+    --btn:#FF8A33; --on-accent:#1B110A;
+    --ok:#55C46D; --ok-soft:#14301C; --on-ok:#0D1A10;
+    --bad:#FF7468; --bad-soft:#3A1916;
+    --stripe-gap:#17110C;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+button{font:inherit}
+.wrap{width:100%;max-width:600px;margin-inline:auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.stripe{height:10px;background:repeating-linear-gradient(-45deg,var(--accent) 0 12px,var(--stripe-gap) 12px 24px)}
+.brand{background:var(--surface);border-bottom:1px solid var(--line)}
+.brand .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.brand .lm{height:30px;width:auto;max-width:55%}
+.brand .lc{height:56px;width:auto}
+main{flex:1;padding-block:28px 40px}
+footer{border-top:1px solid var(--line)}
+footer .wrap{padding-block:16px calc(20px + env(safe-area-inset-bottom, 0px));font-size:13.5px;color:var(--muted)}
+.eyebrow{font:600 13px/1.2 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin:0}
+h1:focus{outline:none}
+.q-h1{font:800 clamp(42px,12vw,58px)/.9 var(--font-display);text-transform:uppercase;margin:8px 0 14px;text-wrap:balance}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.regras{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;padding:0;list-style:none}
+.regras li{font-size:14px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink)}
+.aviso{margin:18px 0 0;padding:12px 14px;border-radius:12px;background:var(--bad-soft);font-size:15.5px}
+.aviso.ok{background:var(--ok-soft)}
+.picker{margin-top:28px}
+.picker-l{display:block;font:700 24px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.02em;margin-bottom:10px}
+.busca{position:relative}
+.busca svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.busca input{width:100%;font:inherit;font-size:17px;padding:13px 14px 13px 44px;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink)}
+.busca input::placeholder{color:var(--muted)}
+.busca input:focus-visible,.q-campo:focus-visible{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.status-lista{font-size:14px;color:var(--muted);margin:10px 2px 0;font-variant-numeric:tabular-nums}
+.nomes{list-style:none;margin:10px 0 0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.nomes li+li{border-top:1px solid var(--line)}
+.nome-btn{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;cursor:pointer}
+.nome-btn:hover:not(:disabled){background:var(--accent-soft)}
+.nome-btn:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.nome-btn:disabled{cursor:not-allowed}
+.nome-btn:disabled .quem,.nome-btn:disabled .iniciais{opacity:.5}
+.iniciais{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 17px/1 var(--font-display);letter-spacing:.03em;background:var(--accent-soft);color:var(--accent-ink)}
+.quem{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.quem strong{font-weight:600}
+.quem span{font-size:14px;color:var(--muted)}
+.chip{flex:none;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.chip.feito{background:var(--line);color:var(--muted)}
+.chip.andamento{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--accent)}
+.seta{flex:none;color:var(--accent-ink);display:grid}
+.vazio{padding:20px 16px;color:var(--muted);text-align:center}
+.dica{font-size:14px;color:var(--muted);margin:12px 2px 0}
+.carregando{display:flex;align-items:center;gap:12px;color:var(--muted);padding:40px 0}
+.giro{width:22px;height:22px;border-radius:50%;border:3px solid var(--line-strong);border-top-color:var(--accent);animation:giro 1s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+
+.q-topo{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.como{font-size:14px;color:var(--muted);margin:0}
+.como strong{color:var(--ink);font-weight:600}
+.sair{all:unset;cursor:pointer;font-size:14px;font-weight:600;color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px}
+.sair:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.contagem{font:700 18px/1 var(--font-display);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 0;font-variant-numeric:tabular-nums}
+.barra{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:6px;margin:10px 0 26px}
+.barra i{height:6px;border-radius:3px;background:var(--line)}
+.barra i.feita{background:var(--accent)}
+.barra i.atual{background:var(--accent);opacity:.4}
+.q-head{display:flex;gap:16px;align-items:flex-start}
+.q-icone{flex:none;width:64px;height:76px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.q-icone b{font:700 18px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.q-texto{font:700 clamp(26px,6.8vw,32px)/1.08 var(--font-display);margin:0;text-wrap:balance;min-width:0;flex:1}
+fieldset.opcoes{border:0;margin:24px 0 0;padding:0;display:grid;gap:10px;min-width:0}
+fieldset.opcoes legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.opt{position:relative;display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--line-strong);border-radius:12px;background:var(--surface);cursor:pointer;transition:border-color .15s,background-color .15s,opacity .15s}
+.opt input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.opt .l{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 18px/1 var(--font-display);border:2px solid var(--line-strong);color:var(--muted)}
+.opt .t{flex:1;min-width:0;font-weight:500;line-height:1.35}
+.opt .m{flex:none;width:24px;height:24px;display:grid;place-items:center}
+.opt:hover{border-color:var(--accent)}
+.opt:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .l{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.opcoes.travada .opt{cursor:default}
+.opcoes.travada .opt:hover{border-color:var(--line-strong)}
+.opcoes.travada .opt:focus-within{outline:none}
+.opcoes.travada .opt:not(.certa):not(.errada){opacity:.5}
+.opcoes.travada .opt.certa{border-color:var(--ok);background:var(--ok-soft)}
+.opcoes.travada .opt.certa .l{background:var(--ok);border-color:var(--ok);color:var(--on-ok)}
+.opcoes.travada .opt.certa .m{color:var(--ok)}
+.opcoes.travada .opt.errada{border-color:var(--bad);background:var(--bad-soft)}
+.opcoes.travada .opt.errada .l{background:var(--bad);border-color:var(--bad);color:var(--on-ok)}
+.opcoes.travada .opt.errada .m{color:var(--bad)}
+.retorno{margin-top:18px;padding:14px 16px;border-radius:12px}
+.retorno.ok{background:var(--ok-soft)}
+.retorno.erro{background:var(--bad-soft)}
+.retorno-t{font:700 21px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 4px}
+.retorno.ok .retorno-t{color:var(--ok)}
+.retorno.erro .retorno-t{color:var(--bad)}
+.retorno p{margin:0}
+.acoes{margin-top:22px;display:grid;gap:10px}
+.btn{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;padding:12px 20px;border-radius:12px;font:700 21px/1 var(--font-display);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--btn);color:var(--on-accent);text-align:center}
+.btn:hover:not(:disabled){filter:brightness(1.07)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.btn:disabled{background:var(--line);color:var(--muted);cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--accent-ink);border:2px solid var(--accent)}
+.q-campo{width:100%;font:inherit;font-size:22px;letter-spacing:.08em;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+.q-campo[aria-invalid="true"]{border-color:var(--bad)}
+.q-label{display:block;font-weight:600;margin:20px 0 8px}
+.q-err{color:var(--bad);font-size:15px;margin:8px 0 0}
+
+.vitoria{background:var(--btn);color:var(--on-accent);border-radius:18px;overflow:hidden}
+.vitoria .faixa{height:12px;background:repeating-linear-gradient(-45deg,var(--on-accent) 0 12px,transparent 12px 24px);opacity:.85}
+.vitoria-corpo{padding:26px 22px 24px;display:grid;gap:16px;justify-items:start}
+.bombom{width:68px;height:68px;border-radius:50%;background:var(--on-accent);color:var(--btn);display:grid;place-items:center}
+.vitoria h1{font:800 clamp(36px,10vw,50px)/.92 var(--font-display);text-transform:uppercase;margin:0;text-wrap:balance}
+.vitoria .retire{font:700 clamp(21px,5.6vw,26px)/1.12 var(--font-display);text-transform:uppercase;letter-spacing:.03em;margin:0;padding-top:16px;border-top:2px dashed currentColor;width:100%}
+.comprovante{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.comprovante h2{font:700 14px/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.comprovante dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0}
+.comprovante dt{color:var(--muted);font-size:15px}
+.comprovante dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums;min-width:0}
+.codigo{font:700 26px/1 var(--font-display);letter-spacing:.18em;color:var(--accent-ink)}
+.comprovante .nota{font-size:14px;color:var(--muted);margin:14px 0 0}
+.derrota{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 20px}
+.derrota h1{font:800 clamp(32px,8.5vw,42px)/.98 var(--font-display);text-transform:uppercase;margin:0 0 10px;text-wrap:balance}
+.derrota .lead{color:var(--ink)}
+.revisao{list-style:none;margin:20px 0 0;padding:0;display:grid}
+.revisao li{display:flex;gap:12px;align-items:flex-start;padding-block:12px;border-top:1px solid var(--line)}
+.ic{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.ic.ok{background:var(--ok);color:var(--on-ok)}
+.ic.erro{background:var(--bad);color:var(--on-ok)}
+.revisao p{margin:0;font-weight:600;line-height:1.35}
+.revisao small{display:block;color:var(--muted);font-size:14px;font-weight:400;margin-top:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="stripe" aria-hidden="true"></div>
+<header class="brand">
+  <div class="wrap">
+    <img class="lm" src="/img/logo-momesso.png" alt="Momesso">
+    <img class="lc" src="/img/logo-cipa.png" alt="CIPA Segurança">
+  </div>
+</header>
+<main class="wrap" id="app" aria-live="polite"></main>
+<footer><div class="wrap"><strong>CIPA Momesso</strong> · Comissão Interna de Prevenção de Acidentes e de Assédio</div></footer>
+
+<script>
+const SVG = (inner, size, sw) => `<svg width="${size || 30}" height="${size || 30}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 1.9}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+const ICONES = {
+  velocidade: SVG('<path d="M3.5 16a8.5 8.5 0 1 1 17 0"/><path d="M12 16l4.2-5"/><circle cx="12" cy="16" r="1.3" fill="currentColor"/><path d="M6.2 10.2l1 .8M12 7.2v1.2M17.8 10.2l-1 .8"/>'),
+  carro: SVG('<path d="M4 15.5V12l2.1-4.6A1.6 1.6 0 0 1 7.6 6.4h8.8a1.6 1.6 0 0 1 1.5 1L20 12v3.5"/><path d="M3 12.5h18v4H3z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'),
+  pedestre: SVG('<ellipse cx="8" cy="7.5" rx="2.6" ry="4.2"/><path d="M6.2 15.2h3.6l-.3 2.6a1.5 1.5 0 0 1-3 0z"/><ellipse cx="16" cy="10.5" rx="2.6" ry="4.2"/><path d="M14.2 18.2h3.6l-.3 1.9a1.5 1.5 0 0 1-3 0z"/>'),
+  moto: SVG('<circle cx="5.5" cy="16" r="3.2"/><circle cx="18.5" cy="16" r="3.2"/><path d="M5.5 16l3.6-6h5.4l4 6"/><path d="M14.5 10l-1.6-3.5H10.5M15.5 6.5h2.8"/>'),
+  padrao: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/>')
+};
+const CERTO = (s) => SVG('<path d="M5 12.5l4.5 4.5L19 7.5"/>', s || 20, 2.6);
+const ERRADO = (s) => SVG('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>', s || 20, 2.6);
+const SETA = SVG('<path d="M9 5l7 7-7 7"/>', 20);
+const LUPA = SVG('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>', 20, 2);
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const norm = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const iniciais = (nome) => { const p = nome.trim().split(/\s+/); return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase(); };
+const dataHora = (i) => new Intl.DateTimeFormat("pt-BR", { timeZone:"America/Sao_Paulo", day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" }).format(new Date(i)).replace(",", " às");
+
+const Q = {
+  tela:"carregando", erroTela:"", aviso:"", busca:"",
+  funcionarios:[], perguntas:[], exigirMatricula:false,
+  func:null, sessao:null, idx:0, escolha:null, retorno:null, resultado:null,
+  enviando:false, erroMat:"", erroPergunta:"", precisaRecomecar:false
+};
+
+async function api(acao, corpo) {
+  let r;
+  try {
+    r = await fetch(`/api/quiz?acao=${acao}`, corpo
+      ? { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify(corpo) }
+      : { cache:"no-store" });
+  } catch {
+    throw Object.assign(new Error("Sem conexão com o servidor. Confira a internet e tente de novo."), { codigo:"rede" });
+  }
+  let j = {};
+  try { j = await r.json(); } catch {}
+  if (!r.ok) throw Object.assign(new Error(j.erro || "Não foi possível continuar. Tente de novo."), { codigo:j.codigo, status:r.status });
+  return j;
+}
+
+/* ---------- Telas ---------- */
+function render(focarTitulo) {
+  const app = $("#app");
+  if (Q.tela === "carregando") app.innerHTML = `<div class="carregando"><span class="giro" aria-hidden="true"></span>Carregando a lista de nomes…</div>`;
+  else if (Q.tela === "falha") app.innerHTML = `<p class="eyebrow">CIPA Momesso</p><h1 class="q-h1" tabindex="-1">Quiz da Segurança</h1>
+      <p class="aviso">${esc(Q.erroTela)}</p><div class="acoes"><button type="button" class="btn" data-act="recarregar">Tentar de novo</button></div>`;
+  else if (Q.tela === "nomes") { app.innerHTML = telaNomes(); renderLista(); }
+  else if (Q.tela === "matricula") app.innerHTML = telaMatricula();
+  else if (Q.tela === "pergunta") app.innerHTML = telaPergunta();
+  else if (Q.tela === "resultado") app.innerHTML = telaResultado();
+  if (focarTitulo) { const h = app.querySelector("h1"); if (h) h.focus({ preventScroll:true }); window.scrollTo(0, 0); }
+}
+
+function telaNomes() {
+  return `<p class="eyebrow">CIPA Momesso</p>
+  <h1 class="q-h1" tabindex="-1">Quiz da Segurança</h1>
+  <p class="lead">${Q.perguntas.length} perguntas sobre as regras de circulação no estacionamento da empresa. Escolha seu nome para começar.</p>
+  <ul class="regras"><li>${Q.perguntas.length} perguntas</li><li>1 tentativa por pessoa</li><li>Acertou todas, ganha brinde</li></ul>
+  ${Q.aviso ? `<p class="aviso" role="alert">${esc(Q.aviso)}</p>` : ""}
+  <div class="picker">
+    <label class="picker-l" for="busca">Selecione seu nome</label>
+    <div class="busca">${LUPA}<input id="busca" type="search" placeholder="Digite parte do nome ou setor" autocomplete="off" value="${esc(Q.busca)}"></div>
+    <p id="status-lista" class="status-lista"></p>
+    <ul id="lista" class="nomes"></ul>
+    <p class="dica">Não encontrou seu nome? Fale com um membro da CIPA.</p>
+  </div>`;
+}
+function renderLista() {
+  const termo = norm(Q.busca);
+  const todos = Q.funcionarios;
+  const lista = todos.filter((f) => norm(f.nome + " " + f.setor).includes(termo))
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  $("#lista").innerHTML = lista.length ? lista.map((f) => {
+    const fim = f.situacao === "concluida" ? `<span class="chip feito">Já respondeu</span>`
+      : f.situacao === "em_andamento" ? `<span class="chip andamento">Continuar</span>` : `<span class="seta">${SETA}</span>`;
+    return `<li><button type="button" class="nome-btn" data-act="nome" data-f="${esc(f.id)}" ${f.situacao === "concluida" ? "disabled" : ""} ${Q.enviando ? "aria-disabled=\"true\"" : ""}>
+      <span class="iniciais">${esc(iniciais(f.nome))}</span>
+      <span class="quem"><strong>${esc(f.nome)}</strong><span>${esc(f.setor)}</span></span>${fim}</button></li>`;
+  }).join("") : `<li class="vazio">${todos.length ? `Nenhum nome encontrado para "${esc(Q.busca.trim())}".` : "A lista de nomes ainda está vazia. Fale com um membro da CIPA."}</li>`;
+  const feitos = todos.filter((f) => f.situacao === "concluida").length;
+  $("#status-lista").textContent = todos.length ? `${feitos} de ${todos.length} já responderam` : "";
+}
+function telaMatricula() {
+  return `<button type="button" class="sair" data-act="voltar">Voltar para a lista</button>
+  <p class="eyebrow" style="margin-top:20px">Confirme quem é você</p>
+  <h1 class="q-h1" style="font-size:clamp(36px,10vw,46px)" tabindex="-1">Olá, ${esc(Q.func.nome.split(" ")[0])}</h1>
+  <p class="lead">Para começar, digite sua matrícula.</p>
+  <form id="form-mat" novalidate>
+    <label class="q-label" for="mat">Matrícula</label>
+    <input id="mat" class="q-campo" inputmode="numeric" autocomplete="off" aria-describedby="mat-err" ${Q.erroMat ? 'aria-invalid="true"' : ""}>
+    <p id="mat-err" class="q-err" ${Q.erroMat ? "" : "hidden"}>${esc(Q.erroMat)}</p>
+    <div class="acoes"><button type="submit" class="btn" ${Q.enviando ? "disabled" : ""}>${Q.enviando ? "Conferindo…" : "Começar o quiz"}</button></div>
+  </form>`;
+}
+function telaPergunta() {
+  const p = Q.perguntas[Q.idx], n = Q.perguntas.length, ultima = Q.idx === n - 1;
+  const r = Q.retorno, validada = !!r;
+  const opts = Object.keys(p.opcoes).sort().map((l) => {
+    let cls = "opt", marca = "";
+    if (validada) { if (l === r.letraCorreta) { cls += " certa"; marca = CERTO(); } else if (l === Q.escolha) { cls += " errada"; marca = ERRADO(); } }
+    else if (l === Q.escolha) cls += " sel";
+    return `<label class="${cls}" for="op-${l}" data-letra="${l}"><input type="radio" name="resp" id="op-${l}" value="${l}" ${Q.escolha === l ? "checked" : ""} ${validada || Q.enviando ? "disabled" : ""}><span class="l">${l}</span><span class="t">${esc(p.opcoes[l])}</span><span class="m">${marca}</span></label>`;
+  }).join("");
+  let botoes;
+  if (Q.precisaRecomecar) botoes = `<button type="button" class="btn" data-act="voltar">Voltar para a lista</button>`;
+  else if (validada) botoes = `<button type="button" id="prox" class="btn" data-act="proxima">${r.concluida ? "Ver resultado" : "Próxima pergunta"}</button>`;
+  else botoes = `<button type="button" id="conf" class="btn" data-act="confirmar" ${Q.escolha && !Q.enviando ? "" : "disabled"}>${Q.enviando ? "Conferindo…" : "Confirmar resposta"}</button>`;
+  return `<div class="q-topo"><p class="como">Respondendo como <strong>${esc(Q.func.nome)}</strong></p>
+    ${validada && r.concluida ? "" : `<button type="button" class="sair" data-act="voltar">Sair e continuar depois</button>`}</div>
+  <p class="contagem">Pergunta ${Q.idx + 1} de ${n}</p>
+  <div class="barra" style="--n:${n}" aria-hidden="true">${Q.perguntas.map((_, i) => `<i class="${i < Q.idx || (i === Q.idx && validada) ? "feita" : i === Q.idx ? "atual" : ""}"></i>`).join("")}</div>
+  <div class="q-head"><div class="q-icone" aria-hidden="true">${ICONES[p.icone] || ICONES.padrao}<b>${String(Q.idx + 1).padStart(2, "0")}</b></div>
+    <h1 class="q-texto" tabindex="-1">${esc(p.texto)}</h1></div>
+  <fieldset class="opcoes ${validada ? "travada" : ""}"><legend>${esc(p.texto)}</legend>${opts}</fieldset>
+  ${validada ? `<div class="retorno ${r.acertou ? "ok" : "erro"}" role="status"><p class="retorno-t">${r.acertou ? "Resposta certa!" : "Resposta incorreta"}</p><p>${esc(r.acertou ? r.frase : `A resposta certa é ${r.letraCorreta}) ${r.textoCorreto}.`)}</p></div>` : ""}
+  ${Q.erroPergunta ? `<p class="aviso" role="alert">${esc(Q.erroPergunta)}</p>` : ""}
+  <div class="acoes">${botoes}</div>`;
+}
+function telaResultado() {
+  const t = Q.resultado;
+  if (t.acertos === t.total) {
+    return `<div class="vitoria"><div class="faixa" aria-hidden="true"></div><div class="vitoria-corpo">
+      <div class="bombom" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4.6"/><path d="M7.6 12L2.5 8.2v7.6zM16.4 12l5.1-3.8v7.6z"/></svg></div>
+      <h1 tabindex="-1">Parabéns, você acertou todas as perguntas!</h1>
+      <p class="retire">Retire seu brinde com o setor responsável</p></div></div>
+    <div class="comprovante"><h2>Comprovante de participação</h2><dl>
+      <dt>Nome</dt><dd>${esc(t.nome)}</dd><dt>Setor</dt><dd>${esc(t.setor)}</dd>
+      <dt>Resultado</dt><dd>${t.acertos} de ${t.total} perguntas</dd><dt>Concluído em</dt><dd>${esc(dataHora(t.concluidaEm))}</dd>
+      <dt>Código</dt><dd class="codigo">${esc(t.codigo)}</dd></dl>
+      <p class="nota">Mostre esta tela no momento da retirada. Se preferir, tire um print.</p></div>
+    <div class="acoes"><button type="button" class="btn sec" data-act="inicio">Voltar ao início</button></div>`;
+  }
+  const rev = (t.revisao || []).map((x) => `<li><span class="ic ${x.acertou ? "ok" : "erro"}">${x.acertou ? CERTO(15) : ERRADO(15)}</span><div style="min-width:0"><p>${esc(x.texto)}<small>${x.acertou
+    ? `Sua resposta: ${esc(x.certa)}) ${esc(x.textoCerto)}` : `Certa: ${esc(x.certa)}) ${esc(x.textoCerto)} · Você marcou ${esc(x.marcada || "-")}`}</small></p></div></li>`).join("");
+  return `<div class="derrota"><h1 tabindex="-1">Você acertou ${t.acertos} de ${t.total} perguntas</h1>
+    <p class="lead">Para ganhar o brinde era preciso acertar todas. Sua participação foi registrada. Confira as respostas certas e leve essas regras para o dia a dia.</p>
+    <ul class="revisao">${rev}</ul></div>
+  <div class="acoes"><button type="button" class="btn sec" data-act="inicio">Voltar ao início</button></div>`;
+}
+
+/* ---------- Fluxo ---------- */
+async function carregar(manterAviso) {
+  if (!manterAviso) Q.aviso = "";
+  Q.tela = "carregando"; render();
+  try {
+    const d = await api("inicio");
+    Q.funcionarios = d.funcionarios; Q.perguntas = d.perguntas; Q.exigirMatricula = d.exigirMatricula;
+    Q.tela = "nomes";
+  } catch (e) { Q.tela = "falha"; Q.erroTela = e.message; }
+  render(true);
+}
+async function iniciar(matricula) {
+  Q.enviando = true; Q.erroMat = ""; render();
+  try {
+    const d = await api("iniciar", { funcionarioId: Q.func.id, matricula });
+    Q.sessao = { tentativaId: d.tentativaId, token: d.token };
+    Q.func.nome = d.nome;
+    const feitas = new Set(d.respondidas);
+    Q.idx = Math.max(0, Q.perguntas.findIndex((p) => !feitas.has(p.id)));
+    Q.escolha = null; Q.retorno = null; Q.erroPergunta = ""; Q.precisaRecomecar = false;
+    Q.enviando = false; Q.tela = "pergunta"; render(true);
+  } catch (e) {
+    Q.enviando = false;
+    if (Q.tela === "matricula" && e.codigo !== "ja_respondeu" && e.codigo !== "nao_encontrado") { Q.erroMat = e.message; render(); const m = $("#mat"); if (m) m.focus(); }
+    else { Q.aviso = e.message; await carregar(true); }
+  }
+}
+async function confirmar() {
+  if (!Q.escolha || Q.retorno || Q.enviando) return;
+  const p = Q.perguntas[Q.idx];
+  Q.enviando = true; Q.erroPergunta = ""; render();
+  try {
+    const r = await api("responder", { ...Q.sessao, perguntaId: p.id, letra: Q.escolha });
+    Q.retorno = r;
+    if (r.concluida) Q.resultado = r.resultado;
+    Q.enviando = false; render(); const b = $("#prox"); if (b) b.focus();
+  } catch (e) {
+    Q.enviando = false; Q.erroPergunta = e.message;
+    Q.precisaRecomecar = ["sessao_invalida", "fora_de_ordem", "ja_respondeu", "nao_encontrado"].includes(e.codigo);
+    render();
+  }
+}
+function proxima() {
+  if (!Q.retorno) return;
+  if (Q.retorno.concluida) { Q.tela = "resultado"; render(true); return; }
+  Q.idx++; Q.escolha = null; Q.retorno = null; Q.erroPergunta = "";
+  render(true);
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-act]");
+  if (!b || b.disabled) return;
+  const a = b.dataset.act;
+  if (a === "recarregar") carregar();
+  else if (a === "nome") {
+    if (Q.enviando) return;
+    const f = Q.funcionarios.find((x) => x.id === b.dataset.f);
+    if (!f || f.situacao === "concluida") return;
+    Q.func = { id: f.id, nome: f.nome };
+    if (Q.exigirMatricula) { Q.erroMat = ""; Q.tela = "matricula"; render(true); const m = $("#mat"); if (m) m.focus(); }
+    else iniciar(null);
+  }
+  else if (a === "voltar" || a === "inicio") { Q.func = null; Q.sessao = null; Q.busca = a === "inicio" ? "" : Q.busca; carregar(); }
+  else if (a === "confirmar") confirmar();
+  else if (a === "proxima") proxima();
+});
+document.addEventListener("input", (e) => {
+  if (e.target.id === "busca") { Q.busca = e.target.value; renderLista(); }
+});
+document.addEventListener("change", (e) => {
+  if (e.target.name === "resp" && !Q.retorno && !Q.enviando) {
+    Q.escolha = e.target.value;
+    document.querySelectorAll("#app .opt").forEach((n) => n.classList.toggle("sel", n.dataset.letra === Q.escolha));
+    const c = $("#conf"); if (c) c.disabled = false;
+  }
+});
+document.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (e.target.id === "form-mat" && !Q.enviando) {
+    const v = $("#mat").value.trim();
+    if (!v) { Q.erroMat = "Digite sua matrícula."; render(); $("#mat").focus(); return; }
+    iniciar(v);
+  }
+});
+
+carregar();
+</script>
+</body>
+</html>

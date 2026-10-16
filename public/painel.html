@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel da CIPA Momesso</title>
+<link rel="icon" href="/img/logo-cipa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#FFF8F2; --surface:#FFFFFF; --surface-2:#FBF2E9; --ink:#2B1E14; --muted:#7A6455;
+  --line:#F1E2D4; --line-strong:#E4CDBA;
+  --accent:#F07A1E; --accent-ink:#BF560A; --accent-soft:#FFEEDF;
+  --btn:#D9640F; --on-accent:#FFFFFF;
+  --ok:#23873A; --ok-soft:#E6F4E9; --on-ok:#FFFFFF;
+  --bad:#C2372C; --bad-soft:#FCEBE8;
+  --stripe-gap:#FFFFFF; --knob:#FFFFFF;
+  --shadow:0 18px 50px -24px rgba(90,45,10,.45);
+  --font-display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --font-body:"Barlow","Segoe UI",Roboto,system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#17110C; --surface:#221912; --surface-2:#1C150F; --ink:#F7EDE4; --muted:#B9A595;
+    --line:#382A20; --line-strong:#4C3A2D;
+    --accent:#FF8A33; --accent-ink:#FFA05A; --accent-soft:#3A2414;
+    --btn:#FF8A33; --on-accent:#1B110A;
+    --ok:#55C46D; --ok-soft:#14301C; --on-ok:#0D1A10;
+    --bad:#FF7468; --bad-soft:#3A1916;
+    --stripe-gap:#17110C; --knob:#FFFFFF;
+    --shadow:0 18px 50px -24px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body.ocupado{cursor:progress}
+button{font:inherit}
+.gut{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.eyebrow{font:600 12.5px/1.2 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin:0}
+h1:focus{outline:none}
+.stripe{height:10px;background:repeating-linear-gradient(-45deg,var(--accent) 0 12px,var(--stripe-gap) 12px 24px)}
+
+.bo-head{background:var(--surface);border-bottom:1px solid var(--line)}
+.bo-head .in{max-width:1280px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:12px 16px;padding-block:10px;flex-wrap:wrap}
+.bo-brand{display:flex;align-items:center;gap:14px}
+.bo-brand .lm{height:24px;width:auto}
+.bo-brand .lc{height:44px;width:auto}
+.bo-brand .sep{width:1px;height:30px;background:var(--line-strong)}
+.bo-dir{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.bo-user{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.25}
+.bo-user div span{display:block;color:var(--muted);font-size:13px}
+.avatar{flex:none;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center;font:700 15px/1 var(--font-display)}
+.bo{max-width:1280px;margin-inline:auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px}
+.bo-nav{padding-block:22px;position:sticky;top:0;align-self:start;display:flex;flex-direction:column;gap:2px}
+.nav-grupo{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:16px 12px 6px}
+.nav-grupo:first-child{margin-top:0}
+.nav-item{all:unset;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:500}
+.nav-item:hover{background:var(--surface-2)}
+.nav-item[aria-current="page"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.nav-item:focus-visible{outline:3px solid var(--accent);outline-offset:-2px}
+.badge{font-size:12px;font-weight:700;background:var(--btn);color:var(--on-accent);border-radius:999px;padding:1px 8px;font-variant-numeric:tabular-nums}
+.bo-main{padding-block:22px 64px;min-width:0}
+@media (max-width:880px){
+  .bo{grid-template-columns:minmax(0,1fr);gap:0}
+  .bo-nav{position:static;flex-direction:row;overflow-x:auto;padding-block:12px 4px;gap:6px}
+  .nav-grupo{display:none}
+  .nav-item{width:auto;white-space:nowrap;border:1px solid var(--line)}
+}
+.pg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px 20px;flex-wrap:wrap;margin-bottom:20px}
+.pg-head h1{font:800 clamp(32px,4vw,42px)/1 var(--font-display);text-transform:uppercase;margin:6px 0 0}
+.pg-sub{color:var(--muted);margin:6px 0 0;font-size:15px;max-width:62ch}
+.pg-acoes{display:flex;gap:10px;flex-wrap:wrap}
+.atual{font-size:13.5px;color:var(--muted);margin:0;font-variant-numeric:tabular-nums}
+.carregando{display:flex;align-items:center;gap:12px;color:var(--muted);padding:40px 0}
+.giro{width:22px;height:22px;border-radius:50%;border:3px solid var(--line-strong);border-top-color:var(--accent);animation:giro 1s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+.falha{background:var(--bad-soft);border-radius:14px;padding:18px;max-width:640px}
+.falha p{margin:0 0 14px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.tile .v{font:700 38px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.tile .v small{font-size:20px;color:var(--muted);font-weight:600}
+.tile .r{font-size:13.5px;color:var(--muted);margin-top:6px}
+.tile .k{font-size:14px;font-weight:600;margin-bottom:8px}
+.tile.destaque{background:var(--btn);color:var(--on-accent);border-color:transparent}
+.tile.destaque .r,.tile.destaque .v small{color:inherit;opacity:.88}
+.bloco{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.bloco h2{font:700 22px/1.1 var(--font-display);text-transform:uppercase;letter-spacing:.02em;margin:0}
+.bloco-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap;margin-bottom:14px}
+.bloco-sub{color:var(--muted);font-size:14px;margin:4px 0 0}
+.pilha{display:grid;gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:1040px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.mini-rank{list-style:none;margin:0;padding:0}
+.mini-rank li{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding-block:10px;border-top:1px solid var(--line)}
+.mini-rank li:first-child{border-top:0;padding-top:0}
+.mini-rank .nm{min-width:0;line-height:1.25}
+.mini-rank .nm strong{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-rank .nm span{font-size:13px;color:var(--muted)}
+.mini-rank .tp{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pos{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font:700 16px/1 var(--font-display);background:var(--line);color:var(--ink);font-variant-numeric:tabular-nums}
+.pos.top{background:var(--btn);color:var(--on-accent)}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;line-height:1.4}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--accent-soft);color:var(--accent-ink)}
+.pill.neutro{background:var(--line);color:var(--muted)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pontos{display:inline-flex;gap:3px;vertical-align:middle;margin-right:8px}
+.pontos i{width:9px;height:9px;border-radius:50%;background:var(--line-strong)}
+.pontos i.on{background:var(--ok)}
+.ac{font-weight:700;font-variant-numeric:tabular-nums}
+.perg{display:grid;gap:7px;padding-block:12px;border-top:1px solid var(--line)}
+.perg:first-child{border-top:0;padding-top:0}
+.perg-t{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:600}
+.perg-t .pc{font:700 22px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.trilho{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.trilho i{display:block;height:100%;border-radius:5px;background:var(--ok)}
+.trilho.laranja i{background:var(--accent)}
+.dist{font-size:13.5px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.dist b{color:var(--ok)}
+.barra-ferr{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.campo{font:inherit;font-size:15px;padding:9px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);min-width:0;max-width:100%}
+.campo::placeholder{color:var(--muted)}
+.campo:focus-visible{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.campo[aria-invalid="true"]{border-color:var(--bad)}
+.campo.busca{flex:1 1 220px}
+textarea.campo{width:100%;min-height:150px;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:14px;line-height:1.5;resize:vertical}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
+.check input{accent-color:var(--btn);width:18px;height:18px;margin:0}
+.btn-s{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;font:700 16px/1 var(--font-display);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--btn);color:var(--on-accent);white-space:nowrap}
+.btn-s:hover{filter:brightness(1.07)}
+.btn-s.sec{background:transparent;color:var(--accent-ink);border:1.5px solid var(--accent)}
+.btn-s.peq{padding:7px 12px;font-size:14px}
+.btn-s.perigo{background:var(--bad);color:var(--on-ok)}
+.btn-s:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.btn-s[disabled]{opacity:.5;cursor:not-allowed;filter:none}
+.lk{all:unset;cursor:pointer;color:var(--accent-ink);font-weight:600;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.lk.perigo{color:var(--bad)}
+.lk:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.lk-acoes{display:flex;gap:14px;align-items:center}
+.mut{color:var(--muted)}
+.tabela{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums}
+th{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:10px 12px;background:var(--surface-2);white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+td.nome-c{white-space:normal;min-width:170px;font-weight:600}
+tr.clicavel{cursor:pointer}
+tr.clicavel:hover td,tr.clicavel[aria-expanded="true"] td{background:var(--surface-2)}
+tr.clicavel:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+tr.det td{background:var(--surface-2);white-space:normal;padding:4px 12px 14px}
+.det-lista{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.det-lista li{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.35}
+.det-lista small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.ic{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.ic.ok{background:var(--ok);color:var(--on-ok)}
+.ic.erro{background:var(--bad);color:var(--on-ok)}
+.nota-regra{display:flex;gap:10px;align-items:center;margin:14px 0 0;font-size:14px;color:var(--muted)}
+.vazio-b{padding:22px 12px;text-align:center;color:var(--muted)}
+.form-painel{background:var(--surface);border:1.5px solid var(--accent);border-radius:16px;padding:18px;margin-bottom:16px}
+.form-painel h2{font:700 22px/1.1 var(--font-display);text-transform:uppercase;margin:0 0 14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.fld{display:grid;gap:6px;align-content:start}
+.fld label,.fld .rot{font-weight:600;font-size:14px}
+.err{color:var(--bad);font-size:13.5px;margin:0}
+.aj{color:var(--muted);font-size:13px;margin:0}
+.form-acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.aviso-b{margin:14px 0 0;padding:10px 12px;border-radius:10px;background:var(--accent-soft);font-size:14px}
+.aviso-b.erro{background:var(--bad-soft)}
+.cards{display:grid;gap:10px}
+.cartao{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.cartao .info{min-width:0;flex:1 1 220px}
+.cartao .info strong{display:block;font-size:17px;font-weight:600}
+.cartao .info span{font-size:14px;color:var(--muted)}
+.cartao .lado-c{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.cartao.entregue{background:var(--surface-2)}
+.codigo{font:700 24px/1 var(--font-display);letter-spacing:.18em;color:var(--accent-ink)}
+.confirma{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:600}
+.sub-h{font:700 17px/1.2 var(--font-display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:18px 0 10px}
+.sub-h:first-child{margin-top:0}
+.switch{display:flex;gap:16px;align-items:flex-start;cursor:pointer}
+.switch input{appearance:none;-webkit-appearance:none;flex:none;width:48px;height:28px;border-radius:14px;background:var(--line-strong);position:relative;cursor:pointer;margin:2px 0 0;transition:background-color .15s}
+.switch input::after{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:var(--knob);transition:transform .15s}
+.switch input:checked{background:var(--ok)}
+.switch input:checked::after{transform:translateX(20px)}
+.switch input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.switch strong{display:block;font-size:17px}
+.switch span{display:block;color:var(--muted);font-size:14.5px;max-width:60ch;margin-top:2px}
+.link-box{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.url{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:14.5px;padding:9px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);user-select:all;overflow-wrap:anywhere;min-width:0}
+.qr-area{display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin-top:18px}
+.qr{background:#FFFFFF;padding:12px;border-radius:12px;line-height:0;border:1px solid var(--line)}
+.qr canvas{width:168px;height:168px;display:block;image-rendering:pixelated}
+.acessos{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.acessos li{padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:15px}
+.acessos code{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:13.5px;background:var(--surface-2);padding:1px 6px;border-radius:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:15px;font-weight:500;box-shadow:var(--shadow);z-index:30;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="stripe" aria-hidden="true"></div>
+<header class="bo-head">
+  <div class="in gut">
+    <div class="bo-brand"><img class="lm" src="/img/logo-momesso.png" alt="Momesso"><span class="sep" aria-hidden="true"></span><img class="lc" src="/img/logo-cipa.png" alt="CIPA Segurança"></div>
+    <div class="bo-dir">
+      <a class="lk" href="/" target="_blank" rel="noopener">Abrir o quiz</a>
+    </div>
+  </div>
+</header>
+<div class="bo gut">
+  <nav id="bo-nav" class="bo-nav" aria-label="Seções"></nav>
+  <main id="bo-main" class="bo-main"><div class="carregando"><span class="giro" aria-hidden="true"></span>Carregando o painel…</div></main>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+/* ================= Estado ================= */
+let S = { setores:[], funcionarios:[], tentativas:{}, config:{ exigirMatricula:false }, papel:null, atualizadoEm:null };
+let PERGUNTAS = [];
+const SECOES_VALIDAS = ["visao","ranking","brindes","funcionarios","setores","config"];
+const ADMIN_SECOES = ["funcionarios","setores","config"];
+const UI = { secao: SECOES_VALIDAS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "visao", carregado:false };
+const F = {
+  rk:{ busca:"", setor:"", todas:false, aberto:null },
+  br:{ busca:"", confirmando:null },
+  fn:{ busca:"", setor:"", sit:"", form:null, imp:null, excluindo:null },
+  st:{ renomeando:null, excluindo:null, erro:"", erroRen:"", novo:"" }
+};
+let ocupado = false;
+
+/* ================= Utilidades ================= */
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const norm = (s) => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const iniciais = (nome) => { const p = nome.trim().split(/\s+/); return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase(); };
+const fmtDH = new Intl.DateTimeFormat("pt-BR", { timeZone:"America/Sao_Paulo", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+const fmtH = new Intl.DateTimeFormat("pt-BR", { timeZone:"America/Sao_Paulo", hour:"2-digit", minute:"2-digit" });
+const dataHora = (i) => fmtDH.format(new Date(i)).replace(",", " às");
+const hora = (i) => fmtH.format(new Date(i));
+const mmss = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(Math.round(s % 60)).padStart(2, "0");
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+const hojeISO = () => new Date().toLocaleDateString("sv-SE", { timeZone:"America/Sao_Paulo" });
+
+const SVG = (inner, size, sw) => `<svg width="${size || 28}" height="${size || 28}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 1.9}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+const CERTO = (s) => SVG('<path d="M5 12.5l4.5 4.5L19 7.5"/>', s || 18, 2.6);
+const ERRADO = (s) => SVG('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>', s || 18, 2.6);
+const CADEADO = SVG('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', 18, 2);
+
+let toastTimer = null;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3800); }
+function focar(sel) { const n = typeof sel === "string" ? $(sel) : sel; if (n) n.focus({ preventScroll:true }); }
+function baixar(blob, nome) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+
+/* ================= API ================= */
+async function api(metodo, acao, corpo) {
+  let r;
+  try {
+    r = await fetch(`/api/admin?acao=${acao}`, {
+      method: metodo, cache: "no-store", credentials: "same-origin",
+      headers: corpo ? { "content-type": "application/json" } : {},
+      body: corpo ? JSON.stringify(corpo) : undefined
+    });
+  } catch { throw new Error("Sem conexão com o servidor. Confira a internet e tente de novo."); }
+  let j = {};
+  try { j = await r.json(); } catch {}
+  if (r.status === 401) throw new Error("Sua sessão expirou. Recarregue a página e entre de novo.");
+  if (!r.ok) throw new Error(j.erro || "Não foi possível concluir. Tente de novo.");
+  return j;
+}
+function aplicar(d) {
+  S = { setores:d.setores, funcionarios:d.funcionarios, tentativas:{}, config:d.config, papel:d.papel, atualizadoEm:new Date() };
+  d.tentativas.forEach((t) => { S.tentativas[t.funcionarioId] = t; });
+  PERGUNTAS = d.perguntas;
+}
+async function recarregar() { aplicar(await api("GET", "estado")); }
+async function executar(acao, corpo, aoErro) {
+  if (ocupado) return null;
+  ocupado = true; document.body.classList.add("ocupado");
+  try {
+    const r = await api("POST", acao, corpo);
+    try { await recarregar(); } catch (e) { toast(e.message); }
+    if (r.mensagem) toast(r.mensagem);
+    return r;
+  } catch (e) {
+    if (aoErro) aoErro(e.message); else toast(e.message);
+    return null;
+  } finally { ocupado = false; document.body.classList.remove("ocupado"); }
+}
+
+/* ================= Regras calculadas ================= */
+const funcionario = (id) => S.funcionarios.find((f) => f.id === id);
+const nomeSetor = (id) => { const s = S.setores.find((x) => x.id === id); return s ? s.nome : "—"; };
+const tempoSeg = (t) => (Date.parse(t.concluidaEm) - Date.parse(t.iniciadaEm)) / 1000;
+function ranking() {
+  const lista = Object.values(S.tentativas).filter((t) => t.status === "concluida").map((t) => ({ fid:t.funcionarioId, t, tempo:tempoSeg(t) }));
+  lista.sort((a, b) => b.t.acertos - a.t.acertos || a.tempo - b.tempo || Date.parse(a.t.concluidaEm) - Date.parse(b.t.concluidaEm));
+  lista.forEach((r, i) => { const ant = lista[i - 1]; r.pos = (i && ant.t.acertos === r.t.acertos && ant.tempo === r.tempo) ? ant.pos : i + 1; });
+  return lista;
+}
+function indicadores() {
+  const ativos = S.funcionarios.filter((f) => f.ativo).length;
+  const ts = Object.values(S.tentativas);
+  const concl = ts.filter((t) => t.status === "concluida");
+  const prem = concl.filter((t) => t.acertos === t.total);
+  return { ativos, concluidas:concl.length, premiados:prem.length, entregues:prem.filter((t) => t.brindeEm).length, andamento:ts.length - concl.length };
+}
+function pontos(n, total) { return `<span class="pontos" aria-hidden="true">${Array.from({ length:total }, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</span>`; }
+
+/* ================= Estrutura ================= */
+const SECOES = [
+  { grupo:"Painel da CIPA", itens:[["visao","Visão geral"],["ranking","Ranking"],["brindes","Entrega de brindes"]] },
+  { grupo:"Administração", admin:true, itens:[["funcionarios","Funcionários"],["setores","Setores"],["config","Configurações"]] }
+];
+function renderTudo(focoTitulo) {
+  if (S.papel !== "admin" && ADMIN_SECOES.includes(UI.secao)) UI.secao = "visao";
+  renderNav(); renderSecao(focoTitulo);
+}
+function renderNav() {
+  const k = indicadores();
+  const pend = k.premiados - k.entregues;
+  $("#bo-nav").innerHTML = SECOES.filter((g) => !g.admin || S.papel === "admin").map((g) =>
+    `<p class="nav-grupo">${g.grupo}</p>` + g.itens.map(([id, nome]) => {
+      const badge = id === "brindes" && pend > 0 ? `<span class="badge" aria-label="${pend} a entregar">${pend}</span>` : "";
+      return `<button type="button" class="nav-item" data-act="nav" data-s="${id}" ${UI.secao === id ? 'aria-current="page"' : ""}>${nome}${badge}</button>`;
+    }).join("")).join("");
+}
+function renderSecao(focoTitulo) {
+  const fn = { visao:secVisao, ranking:secRanking, brindes:secBrindes, funcionarios:secFuncionarios, setores:secSetores, config:secConfig }[UI.secao];
+  $("#bo-main").innerHTML = fn();
+  if (UI.secao === "ranking") renderRankingTabela();
+  if (UI.secao === "brindes") renderBrindesLista();
+  if (UI.secao === "funcionarios") renderFnTabela();
+  if (UI.secao === "config") renderQR();
+  if (focoTitulo) focar("#bo-main h1");
+}
+const cabecalho = (eyebrow, titulo, sub, acoes) => `<div class="pg-head"><div><p class="eyebrow">${eyebrow}</p><h1 tabindex="-1">${titulo}</h1>${sub ? `<p class="pg-sub">${sub}</p>` : ""}</div>${acoes || ""}</div>`;
+const optsSetores = (sel, soAtivos, vazio) => (vazio ? `<option value="">${vazio}</option>` : "") +
+  S.setores.filter((s) => !soAtivos || s.ativo || s.id === sel).slice().sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+    .map((s) => `<option value="${esc(s.id)}" ${s.id === sel ? "selected" : ""}>${esc(s.nome)}${s.ativo ? "" : " (inativo)"}</option>`).join("");
+const atualizadoTxt = () => `<p class="atual" id="atualizado">Atualizado às ${S.atualizadoEm ? hora(S.atualizadoEm) : "--:--"}</p>`;
+
+/* ---- Visão geral ---- */
+function secVisao() {
+  const k = indicadores(); const top = ranking().slice(0, 5);
+  const tiles = `<div class="tiles">
+    <div class="tile"><div class="k">Funcionários ativos</div><div class="v">${k.ativos}</div><div class="r">na lista do quiz</div></div>
+    <div class="tile"><div class="k">Responderam</div><div class="v">${k.concluidas}<small> / ${k.ativos}</small></div><div class="r">${pct(k.concluidas, k.ativos)}% dos ativos</div></div>
+    <div class="tile destaque"><div class="k">Acertaram todas</div><div class="v">${k.premiados}</div><div class="r">ganharam o brinde</div></div>
+    <div class="tile"><div class="k">Brindes entregues</div><div class="v">${k.entregues}<small> / ${k.premiados}</small></div><div class="r">${k.premiados - k.entregues} a entregar</div></div>
+    <div class="tile"><div class="k">Em andamento</div><div class="v">${k.andamento}</div><div class="r">começaram e não terminaram</div></div></div>`;
+  const topHtml = top.length ? `<ol class="mini-rank">${top.map((r) => `<li><span class="pos ${r.pos <= 3 ? "top" : ""}">${r.pos}</span>
+      <span class="nm"><strong>${esc(r.t.nome)}</strong><span>${esc(r.t.setor)}</span></span>
+      <span class="ac">${pontos(r.t.acertos, r.t.total)}${r.t.acertos}/${r.t.total}</span><span class="tp">${mmss(r.tempo)}</span></li>`).join("")}</ol>`
+    : `<p class="vazio-b">Ninguém concluiu o quiz ainda.</p>`;
+  const resp = Object.values(S.tentativas);
+  const perg = PERGUNTAS.map((p, i) => {
+    const marcadas = resp.map((t) => t.respostas[p.id]).filter(Boolean);
+    const certas = marcadas.filter((r) => r.l === p.correta).length; const v = pct(certas, marcadas.length);
+    const dist = Object.keys(p.opcoes).sort().map((l) => { const n = marcadas.filter((r) => r.l === l).length; return l === p.correta ? `<b>${l}: ${n} (certa)</b>` : `<span>${l}: ${n}</span>`; }).join("");
+    return `<div class="perg"><div class="perg-t"><span>${i + 1}. ${esc(p.curto)}</span><span class="pc">${v}%</span></div>
+      <div class="trilho" role="img" aria-label="${v}% de acerto"><i style="width:${v}%"></i></div><div class="dist">${dist}<span>${marcadas.length} resposta${marcadas.length === 1 ? "" : "s"}</span></div></div>`;
+  }).join("");
+  const setores = S.setores.filter((s) => s.ativo).map((s) => {
+    const fs = S.funcionarios.filter((f) => f.ativo && f.setorId === s.id);
+    const ts = fs.map((f) => S.tentativas[f.id]).filter((t) => t && t.status === "concluida");
+    const media = ts.length ? (ts.reduce((a, t) => a + t.acertos, 0) / ts.length).toFixed(1).replace(".", ",") : "—";
+    return { s, total:fs.length, resp:ts.length, media };
+  }).filter((x) => x.total).sort((a, b) => pct(b.resp, b.total) - pct(a.resp, a.total));
+  const tabSet = !setores.length ? `<p class="vazio-b">Cadastre funcionários para ver a participação de cada setor.</p>` : `<div class="tabela"><table><thead><tr><th>Setor</th><th>Responderam</th><th style="width:40%">Participação</th><th>Média de acertos</th></tr></thead><tbody>${setores.map((x) => {
+    const v = pct(x.resp, x.total);
+    return `<tr><td class="nome-c">${esc(x.s.nome)}</td><td>${x.resp} de ${x.total}</td><td><div style="display:flex;align-items:center;gap:10px"><div class="trilho laranja" style="flex:1;min-width:80px"><i style="width:${v}%"></i></div><span style="width:40px;text-align:right">${v}%</span></div></td><td>${x.media}${x.media !== "—" ? " de " + (PERGUNTAS.length || 4) : ""}</td></tr>`;
+  }).join("")}</tbody></table></div>`;
+  return cabecalho("Painel da CIPA", "Visão geral", "Quiz da Segurança · regras do estacionamento", atualizadoTxt()) + tiles +
+    `<div class="pilha"><div class="grid2">
+      <section class="bloco"><div class="bloco-head"><h2>Top 5 do ranking</h2><button type="button" class="lk" data-act="nav" data-s="ranking">Ver ranking completo</button></div>${topHtml}</section>
+      <section class="bloco"><div class="bloco-head"><div><h2>Acerto por pergunta</h2><p class="bloco-sub">Mostra quais regras a equipe conhece menos.</p></div></div>${perg}</section>
+    </div>
+    <section class="bloco"><div class="bloco-head"><h2>Participação por setor</h2></div>${tabSet}</section></div>`;
+}
+
+/* ---- Ranking ---- */
+function secRanking() {
+  const nomesSet = [...new Set(Object.values(S.tentativas).map((t) => t.setor))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  return cabecalho("Painel da CIPA", "Ranking", "Quem já respondeu, ordenado por acertos e depois pelo tempo de resposta. Clique numa pessoa para ver as respostas.",
+    `<div class="pg-acoes">${atualizadoTxt()}<button type="button" class="btn-s sec" data-act="csv">Exportar CSV</button></div>`) +
+  `<section class="bloco">
+    <div class="barra-ferr">
+      <input id="rk-busca" class="campo busca" type="search" placeholder="Buscar por nome" value="${esc(F.rk.busca)}" aria-label="Buscar por nome">
+      <select id="rk-setor" class="campo" aria-label="Filtrar por setor"><option value="">Todos os setores</option>${nomesSet.map((n) => `<option ${F.rk.setor === n ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>
+      <label class="check"><input id="rk-todas" type="checkbox" ${F.rk.todas ? "checked" : ""}> Só quem acertou todas</label>
+    </div>
+    <div id="rk-tabela"></div>
+    <p class="nota-regra">${CADEADO}Respostas registradas não podem ser alteradas, apagadas nem liberadas para responder de novo.</p>
+  </section>`;
+}
+function renderRankingTabela() {
+  const alvo = $("#rk-tabela"); if (!alvo) return;
+  const termo = norm(F.rk.busca);
+  const todos = ranking();
+  const lista = todos.filter((r) => norm(r.t.nome).includes(termo) && (!F.rk.setor || r.t.setor === F.rk.setor) && (!F.rk.todas || r.t.acertos === r.t.total));
+  if (!lista.length) { alvo.innerHTML = `<p class="vazio-b">${todos.length ? "Ninguém encontrado com esses filtros." : "Ninguém concluiu o quiz ainda. Quem terminar aparece aqui."}</p>`; return; }
+  alvo.innerHTML = `<div class="tabela"><table><thead><tr><th>Pos.</th><th>Nome</th><th>Setor</th><th>Acertos</th><th>Tempo</th><th>Concluído em</th><th>Brinde</th></tr></thead><tbody>${lista.map((r) => {
+    const aberto = F.rk.aberto === r.fid; const t = r.t;
+    const brinde = t.acertos !== t.total ? `<span class="mut">—</span>` : t.brindeEm ? `<span class="pill ok">Entregue</span>` : `<span class="pill warn">A entregar</span>`;
+    let linha = `<tr class="clicavel" tabindex="0" data-act="rk-abrir" data-f="${esc(r.fid)}" aria-expanded="${aberto}"><td><span class="pos ${r.pos <= 3 ? "top" : ""}">${r.pos}</span></td><td class="nome-c">${esc(t.nome)}</td><td>${esc(t.setor)}</td><td class="ac">${pontos(t.acertos, t.total)}${t.acertos}/${t.total}</td><td>${mmss(r.tempo)}</td><td>${dataHora(t.concluidaEm)}</td><td>${brinde}</td></tr>`;
+    if (aberto) linha += `<tr class="det"><td colspan="7"><ul class="det-lista">${PERGUNTAS.map((p, i) => {
+      const resp = t.respostas[p.id]; if (!resp) return "";
+      const ok = resp.l === p.correta;
+      return `<li><span class="ic ${ok ? "ok" : "erro"}">${ok ? CERTO(14) : ERRADO(14)}</span><div style="min-width:0"><strong>${i + 1}. ${esc(p.curto)}</strong><small>Marcou ${esc(resp.l)}) ${esc(p.opcoes[resp.l])}${ok ? "" : ` · certa: ${esc(p.correta)}`}</small><small>Respondida às ${hora(resp.em)}</small></div></li>`;
+    }).join("")}</ul>${t.codigo ? `<p class="bloco-sub" style="margin-top:10px">Código do comprovante: <strong>${esc(t.codigo)}</strong>${t.brindeEm ? ` · brinde entregue em ${dataHora(t.brindeEm)} por ${esc(t.brindePor)}` : ""}</p>` : ""}</td></tr>`;
+    return linha;
+  }).join("")}</tbody></table></div>`;
+}
+function exportarCSV() {
+  const linhas = [["Posição","Nome","Setor","Acertos","Total","Tempo (mm:ss)","Concluído em","Código","Brinde entregue em","Entregue por"]];
+  ranking().forEach((r) => linhas.push([r.pos, r.t.nome, r.t.setor, r.t.acertos, r.t.total, mmss(r.tempo), dataHora(r.t.concluidaEm), r.t.codigo || "", r.t.brindeEm ? dataHora(r.t.brindeEm) : "", r.t.brindePor || ""]));
+  const csv = "\ufeff" + linhas.map((l) => l.map((c) => { const s = String(c == null ? "" : c); return /[;"\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(";")).join("\r\n");
+  baixar(new Blob([csv], { type:"text/csv;charset=utf-8" }), `ranking-quiz-cipa-${hojeISO()}.csv`);
+}
+
+/* ---- Entrega de brindes ---- */
+function secBrindes() {
+  return cabecalho("Painel da CIPA", "Entrega de brindes", "Confira o código do comprovante na tela do celular antes de entregar o brinde.", atualizadoTxt()) +
+  `<section class="bloco">
+    <div class="barra-ferr"><input id="br-busca" class="campo busca" type="search" placeholder="Código do comprovante ou nome" value="${esc(F.br.busca)}" aria-label="Código do comprovante ou nome"></div>
+    <div id="br-lista"></div>
+  </section>`;
+}
+function renderBrindesLista() {
+  const alvo = $("#br-lista"); if (!alvo) return;
+  const termo = norm(F.br.busca);
+  const todos = Object.values(S.tentativas).filter((t) => t.status === "concluida");
+  const bate = (t) => !termo || norm(t.nome).includes(termo) || norm(t.codigo).includes(termo);
+  const prem = todos.filter((t) => t.acertos === t.total && bate(t)).sort((a, b) => Date.parse(a.concluidaEm) - Date.parse(b.concluidaEm));
+  const semBrinde = termo ? todos.filter((t) => t.acertos !== t.total && bate(t)) : [];
+  const cartao = (t) => {
+    let lado;
+    if (t.brindeEm) lado = `<span class="pill ok">Entregue em ${dataHora(t.brindeEm)}</span><span class="mut" style="font-size:14px">por ${esc(t.brindePor)}</span>`;
+    else if (F.br.confirmando === t.id) lado = `<span class="confirma">Entregar o brinde para ${esc(t.nome.split(" ")[0])}?<button type="button" class="btn-s peq" data-act="br-ok" data-t="${esc(t.id)}">Confirmar entrega</button><button type="button" class="lk" data-act="br-cancelar">Cancelar</button></span>`;
+    else lado = `<button type="button" class="btn-s peq" data-act="br-registrar" data-t="${esc(t.id)}">Registrar entrega</button>`;
+    return `<div class="cartao ${t.brindeEm ? "entregue" : ""}"><div class="info"><strong>${esc(t.nome)}</strong><span>${esc(t.setor)} · concluiu em ${dataHora(t.concluidaEm)}</span></div>
+      <span class="codigo">${esc(t.codigo)}</span><div class="lado-c">${lado}</div></div>`;
+  };
+  const pend = prem.filter((t) => !t.brindeEm), ent = prem.filter((t) => t.brindeEm);
+  let html = `<h2 class="sub-h">A entregar (${pend.length})</h2>` + (pend.length ? `<div class="cards">${pend.map(cartao).join("")}</div>` : `<p class="vazio-b">Nenhum brinde pendente${termo ? " com essa busca" : ""}.</p>`);
+  html += `<h2 class="sub-h">Já entregues (${ent.length})</h2>` + (ent.length ? `<div class="cards">${ent.map(cartao).join("")}</div>` : `<p class="vazio-b">Nenhum brinde entregue${termo ? " com essa busca" : ""}.</p>`);
+  if (semBrinde.length) html += `<h2 class="sub-h">Sem direito a brinde</h2><div class="cards">${semBrinde.map((t) => `<div class="cartao"><div class="info"><strong>${esc(t.nome)}</strong><span>${esc(t.setor)}</span></div><span class="pill neutro">Acertou ${t.acertos} de ${t.total}</span></div>`).join("")}</div>`;
+  alvo.innerHTML = html;
+}
+
+/* ---- Funcionários ---- */
+function secFuncionarios() {
+  const at = S.funcionarios.filter((f) => f.ativo).length, ina = S.funcionarios.length - at;
+  return cabecalho("Administração", "Funcionários", `${at} ativo${at === 1 ? "" : "s"} · ${ina} inativo${ina === 1 ? "" : "s"}. Só os ativos aparecem na lista do quiz.`,
+    `<div class="pg-acoes"><button type="button" class="btn-s sec" data-act="fn-importar">Importar CSV</button><button type="button" class="btn-s" data-act="fn-novo">Novo funcionário</button></div>`) +
+  `<div id="fn-form">${fnFormHtml()}</div>
+  <section class="bloco">
+    <div class="barra-ferr">
+      <input id="fn-busca" class="campo busca" type="search" placeholder="Buscar por nome ou matrícula" value="${esc(F.fn.busca)}" aria-label="Buscar por nome ou matrícula">
+      <select id="fn-setor" class="campo" aria-label="Filtrar por setor">${optsSetores(F.fn.setor, false, "Todos os setores")}</select>
+      <select id="fn-sit" class="campo" aria-label="Filtrar por situação"><option value="">Ativos e inativos</option><option value="ativo" ${F.fn.sit === "ativo" ? "selected" : ""}>Só ativos</option><option value="inativo" ${F.fn.sit === "inativo" ? "selected" : ""}>Só inativos</option></select>
+    </div>
+    <div id="fn-tabela"></div>
+  </section>`;
+}
+function fnFormHtml() {
+  const fm = F.fn.form, imp = F.fn.imp;
+  if (fm) {
+    const e = fm.erros || {}; const temTent = fm.id && S.tentativas[fm.id];
+    const semSetor = !S.setores.some((s) => s.ativo);
+    return `<form class="form-painel" id="form-fn" novalidate><h2>${fm.id ? "Editar funcionário" : "Novo funcionário"}</h2>
+      ${semSetor ? `<p class="aviso-b erro" style="margin:0 0 14px">Cadastre um setor antes. <button type="button" class="lk" data-act="nav" data-s="setores">Ir para Setores</button></p>` : ""}
+      <div class="form-grid">
+        <div class="fld"><label for="fn-nome">Nome completo</label><input id="fn-nome" class="campo" maxlength="120" value="${esc(fm.nome)}" ${e.nome ? 'aria-invalid="true"' : ""}>${e.nome ? `<p class="err">${e.nome}</p>` : ""}</div>
+        <div class="fld"><label for="fn-mat">Matrícula <span class="mut">(opcional)</span></label><input id="fn-mat" class="campo" inputmode="numeric" maxlength="10" value="${esc(fm.matricula)}" ${e.mat ? 'aria-invalid="true"' : ""}>${e.mat ? `<p class="err">${e.mat}</p>` : `<p class="aj">Necessária se "Exigir matrícula" estiver ligado.</p>`}</div>
+        <div class="fld"><label for="fn-st">Setor</label><select id="fn-st" class="campo" ${e.setor ? 'aria-invalid="true"' : ""}>${optsSetores(fm.setorId, true, "Escolha o setor")}</select>${e.setor ? `<p class="err">${e.setor}</p>` : ""}</div>
+        <div class="fld"><span class="rot">Situação</span><label class="check" for="fn-ativo"><input id="fn-ativo" type="checkbox" ${fm.ativo ? "checked" : ""}> Ativo (aparece no quiz)</label></div>
+      </div>
+      ${temTent ? `<p class="aviso-b">Esta pessoa já respondeu o quiz. O ranking continua mostrando o nome e o setor do momento da resposta.</p>` : ""}
+      ${fm.erroGeral ? `<p class="aviso-b erro" role="alert">${esc(fm.erroGeral)}</p>` : ""}
+      <div class="form-acoes"><button type="submit" class="btn-s">${fm.id ? "Salvar alterações" : "Cadastrar funcionário"}</button><button type="button" class="lk" data-act="fn-fechar">Cancelar</button></div></form>`;
+  }
+  if (imp) {
+    const linhas = imp.preview;
+    const novos = linhas ? linhas.filter((l) => l.status === "novo") : [];
+    const setoresNovos = [...new Set(novos.filter((l) => l.setorNovo).map((l) => l.setor))];
+    return `<div class="form-painel"><h2>Importar funcionários</h2>
+      <div class="form-grid" style="grid-template-columns:minmax(0,1fr)">
+        <div class="fld"><label for="fn-arquivo">Escolha o arquivo CSV</label><input id="fn-arquivo" type="file" accept=".csv,text/csv,text/plain" class="campo">
+          <p class="aj">Uma pessoa por linha, no formato <strong>nome;matricula;setor</strong>. No Excel, use "Salvar como" › <strong>CSV UTF-8</strong>. <button type="button" class="lk" data-act="fn-modelo">Baixar modelo</button></p></div>
+        <div class="fld"><label for="fn-csv">Ou cole o conteúdo aqui</label><textarea id="fn-csv" class="campo" spellcheck="false" placeholder="nome;matricula;setor&#10;Maria da Silva;1234;Produção">${esc(imp.texto)}</textarea></div>
+      </div>
+      <label class="check" style="margin-top:12px"><input id="fn-criar" type="checkbox" ${imp.criarSetores ? "checked" : ""}> Criar os setores que ainda não existem</label>
+      <div class="form-acoes"><button type="button" class="btn-s sec" data-act="fn-previa">Pré-visualizar</button><button type="button" class="lk" data-act="fn-fechar">Cancelar</button></div>
+      ${linhas ? (linhas.length ? `<div class="tabela" style="margin-top:16px"><table><thead><tr><th>Linha</th><th>Nome</th><th>Matrícula</th><th>Setor</th><th>O que acontece</th></tr></thead><tbody>${linhas.map((l, i) => `<tr><td>${i + 1}</td><td class="nome-c">${esc(l.nome || "—")}</td><td>${esc(l.mat || "—")}</td><td>${esc(l.setor || "—")}</td><td><span class="pill ${l.status === "novo" ? (l.setorNovo ? "warn" : "ok") : l.status === "invalida" ? "bad" : "neutro"}">${esc(l.msg)}</span></td></tr>`).join("")}</tbody></table></div>
+      <div class="form-acoes"><button type="button" class="btn-s" data-act="fn-importar-ok" ${novos.length ? "" : "disabled"}>Importar ${novos.length} funcionário${novos.length === 1 ? "" : "s"}</button>${setoresNovos.length ? `<span class="mut" style="font-size:14px">Setores novos: ${esc(setoresNovos.join(", "))}</span>` : ""}</div>` : `<p class="aviso-b erro">Nenhuma linha encontrada. Confira o arquivo.</p>`) : ""}
+      ${imp.erro ? `<p class="aviso-b erro" role="alert">${esc(imp.erro)}</p>` : ""}
+    </div>`;
+  }
+  return "";
+}
+function renderFnTabela() {
+  const alvo = $("#fn-tabela"); if (!alvo) return;
+  const termo = norm(F.fn.busca);
+  const lista = S.funcionarios.filter((f) => (norm(f.nome).includes(termo) || (f.matricula || "").includes(F.fn.busca.trim()))
+    && (!F.fn.setor || f.setorId === F.fn.setor) && (!F.fn.sit || (F.fn.sit === "ativo") === f.ativo))
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  if (!lista.length) { alvo.innerHTML = `<p class="vazio-b">${S.funcionarios.length ? "Nenhum funcionário encontrado." : "Nenhum funcionário cadastrado. Use Novo funcionário ou Importar CSV."}</p>`; return; }
+  alvo.innerHTML = `<div class="tabela"><table><thead><tr><th>Nome</th><th>Matrícula</th><th>Setor</th><th>Situação</th><th>Quiz</th><th>Ações</th></tr></thead><tbody>${lista.map((f) => {
+    const t = S.tentativas[f.id];
+    const quiz = !t ? `<span class="pill neutro">Não respondeu</span>` : t.status === "em_andamento" ? `<span class="pill warn">Em andamento</span>` : `<span class="pill ${t.acertos === t.total ? "ok" : "neutro"}">${t.acertos} de ${t.total}</span>`;
+    let acoes;
+    if (F.fn.excluindo === f.id) acoes = `<span class="lk-acoes"><button type="button" class="btn-s perigo peq" data-act="fn-excluir-ok" data-f="${esc(f.id)}">Confirmar exclusão</button><button type="button" class="lk" data-act="fn-excluir-cancelar">Cancelar</button></span>`;
+    else acoes = `<span class="lk-acoes"><button type="button" class="lk" data-act="fn-editar" data-f="${esc(f.id)}">Editar</button><button type="button" class="lk" data-act="fn-ativo" data-f="${esc(f.id)}">${f.ativo ? "Inativar" : "Ativar"}</button>${t ? `<span class="mut" style="font-size:13px" title="Quem já respondeu não pode ser excluído, só inativado">Não exclui</span>` : `<button type="button" class="lk perigo" data-act="fn-excluir" data-f="${esc(f.id)}">Excluir</button>`}</span>`;
+    return `<tr><td class="nome-c">${esc(f.nome)}</td><td>${f.matricula ? esc(f.matricula) : `<span class="mut">—</span>`}</td><td>${esc(nomeSetor(f.setorId))}</td><td><span class="pill ${f.ativo ? "ok" : "neutro"}">${f.ativo ? "Ativo" : "Inativo"}</span></td><td>${quiz}</td><td>${acoes}</td></tr>`;
+  }).join("")}</tbody></table></div>`;
+}
+async function salvarFuncionario() {
+  const fm = F.fn.form;
+  fm.nome = $("#fn-nome").value.trim().replace(/\s+/g, " "); fm.matricula = $("#fn-mat").value.trim(); fm.setorId = $("#fn-st").value; fm.ativo = $("#fn-ativo").checked;
+  const e = {};
+  if (fm.nome.length < 3) e.nome = "Informe o nome completo.";
+  if (fm.matricula && !/^\d{1,10}$/.test(fm.matricula)) e.mat = "Use só números.";
+  else if (fm.matricula && S.funcionarios.some((f) => f.matricula === fm.matricula && f.id !== fm.id)) e.mat = "Já existe um funcionário com essa matrícula.";
+  if (!fm.setorId) e.setor = "Escolha o setor.";
+  fm.erros = e; fm.erroGeral = "";
+  if (Object.keys(e).length) { $("#fn-form").innerHTML = fnFormHtml(); focar('#form-fn [aria-invalid="true"]'); return; }
+  const r = await executar("func-salvar", { id: fm.id, nome: fm.nome, matricula: fm.matricula, setorId: fm.setorId, ativo: fm.ativo },
+    (msg) => { fm.erroGeral = msg; $("#fn-form").innerHTML = fnFormHtml(); });
+  if (r) { F.fn.form = null; renderTudo(); }
+}
+function analisarCSV(texto, criarSetores) {
+  const linhas = texto.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  if (linhas.length && /^\ufeff?nome\s*[;,]/i.test(linhas[0])) linhas.shift();
+  const mats = new Set(S.funcionarios.map((f) => f.matricula).filter(Boolean));
+  const nomes = new Set(S.funcionarios.map((f) => norm(f.nome)));
+  return linhas.map((l) => {
+    const partes = l.includes(";") ? l.split(";") : l.split(",");
+    const [nome = "", mat = "", setor = ""] = partes.map((x) => x.trim().replace(/^"|"$/g, "").replace(/\s+/g, " "));
+    const base = { nome, mat, setor };
+    if (nome.length < 3 || setor.length < 2) return { ...base, status:"invalida", msg:"Incompleta: precisa de nome e setor" };
+    if (mat && !/^\d{1,10}$/.test(mat)) return { ...base, status:"invalida", msg:"Matrícula com letras" };
+    if (nomes.has(norm(nome)) || (mat && mats.has(mat))) return { ...base, status:"ignorar", msg:"Já cadastrado, será ignorado" };
+    const existe = S.setores.some((s) => norm(s.nome) === norm(setor));
+    if (!existe && !criarSetores) return { ...base, status:"ignorar", msg:"Setor não existe, será ignorado" };
+    nomes.add(norm(nome)); if (mat) mats.add(mat);
+    return { ...base, status:"novo", setorNovo:!existe, msg: existe ? "Será cadastrado" : "Será cadastrado com setor novo" };
+  });
+}
+function lerArquivo(arquivo) {
+  const ler = (cod) => new Promise((ok, falha) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = falha; fr.readAsText(arquivo, cod); });
+  return ler("utf-8").then((t) => t.includes("\ufffd") ? ler("windows-1252") : t);
+}
+
+/* ---- Setores ---- */
+function secSetores() {
+  const linhas = S.setores.slice().sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map((s) => {
+    const n = S.funcionarios.filter((f) => f.setorId === s.id).length;
+    const nAtivos = S.funcionarios.filter((f) => f.setorId === s.id && f.ativo).length;
+    let nomeCel = esc(s.nome), acoes;
+    if (F.st.renomeando === s.id) {
+      nomeCel = `<form id="form-ren" class="lk-acoes" data-s="${esc(s.id)}" novalidate><input id="st-ren" class="campo" maxlength="80" value="${esc(s.nome)}" aria-label="Novo nome do setor" ${F.st.erroRen ? 'aria-invalid="true"' : ""}><button type="submit" class="btn-s peq">Salvar</button><button type="button" class="lk" data-act="st-cancelar">Cancelar</button></form>${F.st.erroRen ? `<p class="err" style="margin-top:6px">${esc(F.st.erroRen)}</p>` : ""}`;
+      acoes = "";
+    } else if (F.st.excluindo === s.id) {
+      acoes = `<span class="lk-acoes"><button type="button" class="btn-s perigo peq" data-act="st-excluir-ok" data-s="${esc(s.id)}">Confirmar exclusão</button><button type="button" class="lk" data-act="st-cancelar">Cancelar</button></span>`;
+    } else {
+      acoes = `<span class="lk-acoes"><button type="button" class="lk" data-act="st-renomear" data-s="${esc(s.id)}">Renomear</button><button type="button" class="lk" data-act="st-ativo" data-s="${esc(s.id)}">${s.ativo ? "Inativar" : "Ativar"}</button>${n ? `<span class="mut" style="font-size:13px" title="Setor com funcionários não pode ser excluído">Não exclui</span>` : `<button type="button" class="lk perigo" data-act="st-excluir" data-s="${esc(s.id)}">Excluir</button>`}</span>`;
+    }
+    return `<tr><td class="nome-c">${nomeCel}</td><td>${nAtivos} ativo${nAtivos === 1 ? "" : "s"}${n > nAtivos ? ` <span class="mut">· ${n - nAtivos} inativo${n - nAtivos === 1 ? "" : "s"}</span>` : ""}</td><td><span class="pill ${s.ativo ? "ok" : "neutro"}">${s.ativo ? "Ativo" : "Inativo"}</span></td><td>${acoes}</td></tr>`;
+  }).join("");
+  return cabecalho("Administração", "Setores", "O setor aparece abaixo do nome na lista do quiz e é usado nos filtros do painel.") +
+  `<div class="pilha"><form class="bloco" id="form-st" novalidate><div class="bloco-head"><h2>Novo setor</h2></div>
+    <div class="barra-ferr" style="margin:0"><input id="st-nome" class="campo busca" maxlength="80" placeholder="Nome do setor" value="${esc(F.st.novo)}" aria-label="Nome do novo setor" ${F.st.erro ? 'aria-invalid="true"' : ""}><button type="submit" class="btn-s">Adicionar setor</button></div>
+    ${F.st.erro ? `<p class="err" style="margin-top:8px">${esc(F.st.erro)}</p>` : ""}</form>
+  <section class="bloco">${S.setores.length ? `<div class="tabela"><table><thead><tr><th>Setor</th><th>Funcionários</th><th>Situação</th><th>Ações</th></tr></thead><tbody>${linhas}</tbody></table></div>` : `<p class="vazio-b">Nenhum setor cadastrado ainda.</p>`}
+  <p class="nota-regra">Setor inativo some da lista de escolha no cadastro, mas continua nos funcionários que já estão nele.</p></section></div>`;
+}
+
+/* ---- Configurações ---- */
+const linkQuiz = () => location.origin + "/";
+function secConfig() {
+  const semMat = S.funcionarios.filter((f) => f.ativo && !f.matricula).length;
+  return cabecalho("Administração", "Configurações", "") +
+  `<div class="pilha">
+    <section class="bloco"><label class="switch" for="cfg-mat"><input id="cfg-mat" type="checkbox" role="switch" ${S.config.exigirMatricula ? "checked" : ""}>
+      <span><strong>Exigir matrícula para responder</strong><span>Depois de escolher o nome, o funcionário digita a matrícula. Impede que alguém responda no lugar de outra pessoa. Depois de 5 erros seguidos, aquele nome fica bloqueado por 15 minutos.</span></span></label>
+      ${semMat ? `<p class="aviso-b">${semMat} funcionário${semMat === 1 ? " ativo está" : "s ativos estão"} sem matrícula e não ${semMat === 1 ? "conseguirá" : "conseguirão"} responder com essa opção ligada. <button type="button" class="lk" data-act="nav" data-s="funcionarios">Ver funcionários</button></p>` : ""}
+    </section>
+    <section class="bloco"><div class="bloco-head"><div><h2>Link do quiz</h2><p class="bloco-sub">Envie no grupo dos funcionários ou imprima o QR Code e cole no mural.</p></div></div>
+      <div class="link-box"><span class="url" id="cfg-url">${esc(linkQuiz())}</span><button type="button" class="btn-s sec peq" data-act="copiar">Copiar link</button></div>
+      <div class="qr-area"><div class="qr" id="qr"></div>
+        <div><button type="button" class="btn-s peq" data-act="qr-baixar">Baixar QR Code (PNG)</button><p class="mut" style="max-width:36ch;margin:10px 0 0;font-size:14.5px">A imagem baixada tem tamanho bom para imprimir em folha A4.</p></div></div>
+    </section></div>`;
+}
+function qrCanvas(escala, margem) {
+  if (typeof qrcode !== "function") return null;
+  const q = qrcode(0, "M"); q.addData(linkQuiz()); q.make();
+  const n = q.getModuleCount(), lado = (n + margem * 2) * escala;
+  const c = document.createElement("canvas"); c.width = c.height = lado;
+  const g = c.getContext("2d"); g.fillStyle = "#FFFFFF"; g.fillRect(0, 0, lado, lado); g.fillStyle = "#000000";
+  for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (q.isDark(r, col)) g.fillRect((col + margem) * escala, (r + margem) * escala, escala, escala);
+  return c;
+}
+function renderQR() {
+  const box = $("#qr"); if (!box) return;
+  const c = qrCanvas(6, 0);
+  if (c) box.replaceChildren(c); else box.innerHTML = `<div style="width:168px;height:168px;display:grid;place-items:center;color:#555;font-size:13px;line-height:1.3;text-align:center">Não foi possível<br>gerar o QR Code</div>`;
+}
+
+/* ================= Eventos ================= */
+const ACOES = {
+  nav: (b) => { UI.secao = b.dataset.s; F.fn.form = F.fn.imp = null; F.rk.aberto = null; F.br.confirmando = null; history.replaceState(null, "", "#" + UI.secao); renderTudo(true); window.scrollTo(0, 0); atualizarSilencioso(); },
+  "rk-abrir": (b) => { F.rk.aberto = F.rk.aberto === b.dataset.f ? null : b.dataset.f; renderRankingTabela(); focar(`tr[data-f="${b.dataset.f}"]`); },
+  csv: () => exportarCSV(),
+  "br-registrar": (b) => { F.br.confirmando = b.dataset.t; renderBrindesLista(); focar('[data-act="br-ok"]'); },
+  "br-cancelar": () => { F.br.confirmando = null; renderBrindesLista(); },
+  "br-ok": async (b) => { const r = await executar("brinde", { tentativaId: b.dataset.t }); F.br.confirmando = null; renderNav(); renderBrindesLista(); if (!r) return; },
+  "fn-novo": () => { F.fn.imp = null; F.fn.form = { id:null, nome:"", matricula:"", setorId:"", ativo:true, erros:{} }; $("#fn-form").innerHTML = fnFormHtml(); focar("#fn-nome"); },
+  "fn-editar": (b) => { const f = funcionario(b.dataset.f); F.fn.imp = null; F.fn.form = { id:f.id, nome:f.nome, matricula:f.matricula || "", setorId:f.setorId, ativo:f.ativo, erros:{} }; $("#fn-form").innerHTML = fnFormHtml(); $("#fn-form").scrollIntoView({ block:"nearest" }); focar("#fn-nome"); },
+  "fn-fechar": () => { F.fn.form = F.fn.imp = null; $("#fn-form").innerHTML = ""; },
+  "fn-importar": () => { F.fn.form = null; F.fn.imp = { texto:"", criarSetores:true, preview:null, erro:"" }; $("#fn-form").innerHTML = fnFormHtml(); focar("#fn-arquivo"); },
+  "fn-modelo": () => baixar(new Blob(["\ufeffnome;matricula;setor\r\nMaria da Silva;1234;Produção\r\n"], { type:"text/csv;charset=utf-8" }), "modelo-funcionarios.csv"),
+  "fn-previa": () => { F.fn.imp.texto = $("#fn-csv").value; F.fn.imp.criarSetores = $("#fn-criar").checked; F.fn.imp.erro = ""; F.fn.imp.preview = analisarCSV(F.fn.imp.texto, F.fn.imp.criarSetores); $("#fn-form").innerHTML = fnFormHtml(); focar('[data-act="fn-importar-ok"]'); },
+  "fn-importar-ok": async () => {
+    const imp = F.fn.imp; const novos = (imp.preview || []).filter((l) => l.status === "novo");
+    if (!novos.length) return;
+    const r = await executar("importar", { linhas: novos.map((l) => ({ nome:l.nome, matricula:l.mat, setor:l.setor })), criarSetores: imp.criarSetores },
+      (msg) => { imp.erro = msg; $("#fn-form").innerHTML = fnFormHtml(); });
+    if (r) { F.fn.imp = null; renderTudo(); }
+  },
+  "fn-ativo": async (b) => { const f = funcionario(b.dataset.f); await executar("func-ativo", { id:f.id, ativo:!f.ativo }); renderTudo(); },
+  "fn-excluir": (b) => { F.fn.excluindo = b.dataset.f; renderFnTabela(); focar('[data-act="fn-excluir-ok"]'); },
+  "fn-excluir-cancelar": () => { F.fn.excluindo = null; renderFnTabela(); },
+  "fn-excluir-ok": async (b) => { await executar("func-excluir", { id:b.dataset.f }); F.fn.excluindo = null; renderTudo(); },
+  "st-renomear": (b) => { F.st.renomeando = b.dataset.s; F.st.excluindo = null; F.st.erroRen = ""; renderSecao(); focar("#st-ren"); },
+  "st-cancelar": () => { F.st.renomeando = F.st.excluindo = null; F.st.erroRen = ""; renderSecao(); },
+  "st-ativo": async (b) => { const s = S.setores.find((x) => x.id === b.dataset.s); await executar("setor-ativo", { id:s.id, ativo:!s.ativo }); renderTudo(); },
+  "st-excluir": (b) => { F.st.excluindo = b.dataset.s; F.st.renomeando = null; renderSecao(); focar('[data-act="st-excluir-ok"]'); },
+  "st-excluir-ok": async (b) => { await executar("setor-excluir", { id:b.dataset.s }); F.st.excluindo = null; renderTudo(); },
+  copiar: () => {
+    const sel = () => { const r = document.createRange(); r.selectNodeContents($("#cfg-url")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(linkQuiz()).then(() => toast("Link copiado."), () => { sel(); toast("Link selecionado. Use Ctrl+C para copiar."); }); }
+    catch { sel(); toast("Link selecionado. Use Ctrl+C para copiar."); }
+  },
+  "qr-baixar": () => {
+    const c = qrCanvas(24, 4);
+    if (!c) { toast("Não foi possível gerar o QR Code. Recarregue a página e tente de novo."); return; }
+    c.toBlob((blob) => baixar(blob, "qrcode-quiz-cipa.png"), "image/png");
+  },
+  recarregar: () => iniciar()
+};
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-act]");
+  if (!b || b.disabled) return;
+  if (ocupado && !["nav","rk-abrir","csv","copiar","qr-baixar","fn-fechar","fn-modelo"].includes(b.dataset.act)) return;
+  const fn = ACOES[b.dataset.act]; if (fn) fn(b, e);
+});
+document.addEventListener("keydown", (e) => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("tr[data-act]")) { e.preventDefault(); ACOES[e.target.dataset.act](e.target); }
+});
+document.addEventListener("input", (e) => {
+  const t = e.target;
+  if (t.id === "rk-busca") { F.rk.busca = t.value; F.rk.aberto = null; renderRankingTabela(); }
+  else if (t.id === "br-busca") { F.br.busca = t.value; F.br.confirmando = null; renderBrindesLista(); }
+  else if (t.id === "fn-busca") { F.fn.busca = t.value; F.fn.excluindo = null; renderFnTabela(); }
+  else if (t.id === "st-nome") F.st.novo = t.value;
+});
+document.addEventListener("change", async (e) => {
+  const t = e.target;
+  if (t.id === "rk-setor") { F.rk.setor = t.value; F.rk.aberto = null; renderRankingTabela(); }
+  else if (t.id === "rk-todas") { F.rk.todas = t.checked; F.rk.aberto = null; renderRankingTabela(); }
+  else if (t.id === "fn-setor") { F.fn.setor = t.value; renderFnTabela(); }
+  else if (t.id === "fn-sit") { F.fn.sit = t.value; renderFnTabela(); }
+  else if (t.id === "fn-criar" && F.fn.imp) { F.fn.imp.criarSetores = t.checked; F.fn.imp.texto = $("#fn-csv").value; if (F.fn.imp.preview) { F.fn.imp.preview = analisarCSV(F.fn.imp.texto, t.checked); $("#fn-form").innerHTML = fnFormHtml(); focar("#fn-criar"); } }
+  else if (t.id === "fn-arquivo" && t.files && t.files[0] && F.fn.imp) {
+    try { F.fn.imp.texto = await lerArquivo(t.files[0]); F.fn.imp.erro = ""; F.fn.imp.preview = analisarCSV(F.fn.imp.texto, $("#fn-criar").checked); }
+    catch { F.fn.imp.erro = "Não foi possível ler o arquivo. Tente salvar de novo como CSV UTF-8."; }
+    $("#fn-form").innerHTML = fnFormHtml(); focar('[data-act="fn-importar-ok"]');
+  }
+  else if (t.id === "cfg-mat") {
+    const valor = t.checked;
+    const r = await executar("config", { exigirMatricula: valor });
+    if (!r) t.checked = !valor;
+  }
+});
+document.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (ocupado) return;
+  const id = e.target.id;
+  if (id === "form-fn") salvarFuncionario();
+  else if (id === "form-st") {
+    const nome = $("#st-nome").value.trim().replace(/\s+/g, " "); F.st.novo = nome;
+    if (nome.length < 2) { F.st.erro = "Informe o nome do setor."; renderSecao(); focar("#st-nome"); return; }
+    if (S.setores.some((s) => norm(s.nome) === norm(nome))) { F.st.erro = "Já existe um setor com esse nome."; renderSecao(); focar("#st-nome"); return; }
+    const r = await executar("setor-salvar", { nome }, (msg) => { F.st.erro = msg; });
+    if (r) { F.st.erro = ""; F.st.novo = ""; }
+    renderTudo(); focar("#st-nome");
+  }
+  else if (id === "form-ren") {
+    const sid = e.target.dataset.s; const nome = $("#st-ren").value.trim().replace(/\s+/g, " ");
+    if (nome.length < 2) { F.st.erroRen = "Informe o nome do setor."; renderSecao(); focar("#st-ren"); return; }
+    if (S.setores.some((s) => s.id !== sid && norm(s.nome) === norm(nome))) { F.st.erroRen = "Já existe um setor com esse nome."; renderSecao(); focar("#st-ren"); return; }
+    const r = await executar("setor-salvar", { id:sid, nome }, (msg) => { F.st.erroRen = msg; });
+    if (r) { F.st.renomeando = null; F.st.erroRen = ""; }
+    renderTudo();
+  }
+});
+
+/* ================= Atualização automática (painel) ================= */
+// Busca os dados de novo sem atrapalhar quem está digitando ou confirmando algo
+async function atualizarSilencioso() {
+  if (!UI.carregado || ocupado) return;
+  const secao = UI.secao;
+  try { await recarregar(); } catch { return; /* tenta de novo no próximo ciclo */ }
+  if (UI.secao !== secao || ocupado) return;
+  renderNav();
+  const ativo = document.activeElement;
+  const digitando = ativo && ativo.matches("input, select, textarea");
+  if (secao === "visao") renderSecao();
+  else if (secao === "ranking") renderRankingTabela();
+  else if (secao === "brindes" && !F.br.confirmando) renderBrindesLista();
+  else if (secao === "funcionarios" && !F.fn.excluindo) renderFnTabela();
+  else if (secao === "setores" && !digitando && !F.st.renomeando && !F.st.excluindo) renderSecao();
+  const a = $("#atualizado"); if (a) a.textContent = `Atualizado às ${hora(S.atualizadoEm)}`;
+}
+setInterval(() => {
+  if (document.visibilityState !== "visible" || F.br.confirmando) return;
+  if (!["visao","ranking","brindes"].includes(UI.secao)) return;
+  const ativo = document.activeElement;
+  if (ativo && ativo.matches("input, select, textarea")) return;
+  atualizarSilencioso();
+}, 20000);
+
+async function iniciar() {
+  $("#bo-main").innerHTML = `<div class="carregando"><span class="giro" aria-hidden="true"></span>Carregando o painel…</div>`;
+  try {
+    await recarregar();
+    UI.carregado = true;
+    renderTudo();
+  } catch (e) {
+    $("#bo-main").innerHTML = `<div class="falha" role="alert"><p>${esc(e.message)}</p><button type="button" class="btn-s" data-act="recarregar">Tentar de novo</button></div>`;
+  }
+}
+iniciar();
+</script>
+</body>
+</html>
